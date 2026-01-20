@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<title>Danh Web</title>
+
+<style>
+*{box-sizing:border-box;font-family:Segoe UI}
+
+/* ===== LOGIN ===== */
+body{
+    margin:0;
+    min-height:100vh;
+    background:radial-gradient(circle at top,#111b33,#070c18);
+    color:#fff;
+}
+
+#loginPage{
+    height:100vh;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    background:url("25003.jpg") center/cover no-repeat;
+}
+
+.login-social{
+    position:absolute;
+    top:20px;
+    right:20px;
+    display:flex;
+    gap:12px;
+}
+.login-social a{
+    width:42px;
+    height:42px;
+    background:rgba(255,255,255,.15);
+    border-radius:12px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    color:white;
+    text-decoration:none;
+    font-size:20px;
+}
+
+.login-box{
+    width:360px;
+    padding:30px;
+    border-radius:20px;
+    background:rgba(255,255,255,.2);
+    backdrop-filter:blur(12px);
+}
+
+.lang{text-align:right;cursor:pointer}
+
+.login-box input{
+    width:100%;
+    padding:12px;
+    margin-top:10px;
+    border-radius:10px;
+    border:none;
+}
+
+.login-box button{
+    width:100%;
+    padding:12px;
+    margin-top:15px;
+    border:none;
+    border-radius:12px;
+    background:#6a5cff;
+    color:white;
+    cursor:pointer;
+}
+
+.toggle{text-align:center;margin-top:12px;cursor:pointer}
+
+/* ===== HOME ===== */
+#homePage{display:none}
+
+.header{
+    padding:20px 30px;
+    display:flex;
+    justify-content:space-between;
+    border-bottom:1px solid rgba(255,255,255,.1);
+}
+
+.logo{font-size:26px;color:#4c8cff}
+
+.logout{
+    background:#ff4c4c;
+    border:none;
+    padding:10px 16px;
+    border-radius:10px;
+    color:white;
+    cursor:pointer;
+}
+
+.search{padding:25px 30px}
+.search input{
+    width:100%;
+    padding:15px;
+    border-radius:16px;
+    border:none;
+}
+
+.grid{
+    padding:20px 30px;
+    display:grid;
+    grid-template-columns:repeat(auto-fill,minmax(260px,1fr));
+    gap:20px;
+}
+
+.card{
+    background:#141c2f;
+    padding:20px;
+    border-radius:20px;
+}
+
+.card img{
+    width:54px;
+    height:54px;
+    border-radius:14px;
+}
+
+.tag{
+    background:#4c8cff;
+    padding:5px 12px;
+    border-radius:10px;
+    font-size:12px;
+}
+
+.links a{
+    display:block;
+    margin-top:8px;
+    color:#4c8cff;
+    cursor:pointer;
+}
+
+/* SOCIAL */
+.social{
+    position:fixed;
+    bottom:8px;
+    right:8px;
+    display:flex;
+    gap:12px;
+}
+
+.social a{
+    width:46px;
+    height:46px;
+    background:#141c2f;
+    border-radius:14px;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+}
+
+.social img{width:26px}
+</style>
+</head>
+
+<body>
+
+<!-- ===== LOGIN ===== -->
+<div id="loginPage">
+
+<div class="login-social">
+    <a href="https://www.facebook.com/profile.php?id=61556788532608&locale=vi_VN" target="_blank">f</a>
+    <a href="https://www.tiktok.com/@hoangducdanh1" target="_blank">♪</a>
+</div>
+
+<div class="login-box">
+    <div class="lang" onclick="switchLang()">🌐 VI / EN</div>
+    <h2 id="title"></h2>
+    <p id="desc"></p>
+    <input id="email" placeholder="Email">
+    <input id="password" type="password" placeholder="Password">
+    <button onclick="submitForm()" id="btn"></button>
+    <div class="toggle" onclick="toggleForm()" id="toggle"></div>
+</div>
+</div>
+
+<!-- ===== HOME ===== -->
+<div id="homePage">
+
+<div class="header">
+    <div class="logo"> Thư Viện Của Danh</div>
+    <button class="logout" onclick="logout()">Đăng xuất</button>
+</div>
+
+<div class="search">
+    <input placeholder="🔍 Tìm kiếm code của bạn...">
+</div>
+
+<div class="grid">
+<div class="card">
+    <img src="locket.png">
+    <h3>Locket Gold</h3>
+    <span class="tag">python</span>
+    <div class="links">
+        <a href="https://raw.githubusercontent.com/NightmarketServer/Locket/refs/heads/main/Locketgold-V10.module" target="_blank">📦 Modules</a>
+        <a onclick="copyModule()">📋 Sao chép</a>
+        <a href="locketgold.mobileconfig" target="_blank">⬇️ Tải DNS</a>
+    </div>
+</div>
+</div>
+
+<div class="social">
+    <a href="https://www.facebook.com/profile.php?id=61556788532608&locale=vi_VN" target="_blank">
+        <img src="fb.png">
+    </a>
+    <a href="https://www.tiktok.com/@hoangducdanh1" target="_blank">
+        <img src="tiktok.png">
+    </a>
+</div>
+
+</div>
+
+<script>
+let isLogin=true,isVI=true;
+
+function updateText(){
+    title.innerText=isLogin?"Chào mừng trở lại":"Đăng ký";
+    desc.innerText=isLogin?"Đăng nhập để tiếp tục":"Tạo tài khoản mới";
+    btn.innerText=isLogin?"Đăng nhập":"Đăng ký";
+    toggle.innerText=isLogin?"Chưa có tài khoản? Đăng ký":"Đã có tài khoản? Đăng nhập";
+}
+
+function toggleForm(){isLogin=!isLogin;updateText();}
+function switchLang(){isVI=!isVI;}
+
+function submitForm(){
+    let e=email.value.trim(),p=password.value.trim();
+    if(!e||!p) return alert("Nhập đầy đủ!");
+
+    if(isLogin){
+        if(localStorage.getItem("user_"+e)===p){
+            localStorage.setItem("login","true");
+            showHome();
+        }else alert("Sai tài khoản!");
+    }else{
+        localStorage.setItem("user_"+e,p);
+        alert("Đăng ký thành công!");
+        isLogin=true;updateText();
+    }
+}
+
+function showHome(){
+    loginPage.style.display="none";
+    homePage.style.display="block";
+}
+
+function logout(){
+    localStorage.removeItem("login");
+    location.reload();
+}
+
+function copyModule(){
+    navigator.clipboard.writeText(
+      "https://raw.githubusercontent.com/NightmarketServer/Locket/refs/heads/main/Locketgold-V10.module"
+    );
+    alert("Đã sao chép!");
+}
+
+if(localStorage.getItem("login")==="true") showHome();
+updateText();
+</script>
+
+</body>
+</html>
