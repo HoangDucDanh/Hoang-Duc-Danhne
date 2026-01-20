@@ -323,14 +323,29 @@ function showHome(){
  homePage.style.display="block";
 }
 
-window.logout = ()=>signOut(auth);
+/* ===== FIX LOGOUT ===== */
+window.logout = ()=>{
+ signOut(auth).then(()=>{
+   homePage.style.display="none";
+   loginPage.style.display="flex";
+ });
+}
+
 window.copyModule = ()=>{
- navigator.clipboard.writeText("https://raw.githubusercontent.com/NightmarketServer/Locket/refs/heads/main/Locketgold-V10.module");
+ navigator.clipboard.writeText(
+ "https://raw.githubusercontent.com/NightmarketServer/Locket/refs/heads/main/Locketgold-V10.module"
+ );
  alert("Copied!");
 }
 
+/* ===== AUTH STATE ===== */
 onAuthStateChanged(auth,user=>{
- if(user) showHome();
+ if(user){
+   showHome();
+ }else{
+   homePage.style.display="none";
+   loginPage.style.display="flex";
+ }
 });
 
 updateText();
