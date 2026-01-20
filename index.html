@@ -51,7 +51,7 @@ body{
     backdrop-filter:blur(12px);
 }
 
-.lang{text-align:right;cursor:pointer}
+.lang{cursor:pointer;text-align:right;margin-bottom:10px}
 
 .login-box input{
     width:100%;
@@ -81,10 +81,17 @@ body{
     padding:20px 30px;
     display:flex;
     justify-content:space-between;
+    align-items:center;
     border-bottom:1px solid rgba(255,255,255,.1);
 }
 
 .logo{font-size:26px;color:#4c8cff}
+
+.header-right{
+    display:flex;
+    gap:12px;
+    align-items:center;
+}
 
 .logout{
     background:#ff4c4c;
@@ -165,16 +172,16 @@ body{
 <div id="loginPage">
 
 <div class="login-social">
-    <a href="https://www.facebook.com/profile.php?id=61556788532608&locale=vi_VN" target="_blank">f</a>
+    <a href="https://www.facebook.com/profile.php?id=61556788532608" target="_blank">f</a>
     <a href="https://www.tiktok.com/@hoangducdanh1" target="_blank">♪</a>
 </div>
 
 <div class="login-box">
-    <div class="lang" onclick="switchLang()">🌐 VI / EN</div>
+    <div class="lang" onclick="switchLang()">🌐 <span id="langText">VI</span></div>
     <h2 id="title"></h2>
     <p id="desc"></p>
-    <input id="email" placeholder="Email">
-    <input id="password" type="password" placeholder="Password">
+    <input id="email">
+    <input id="password" type="password">
     <button onclick="submitForm()" id="btn"></button>
     <div class="toggle" onclick="toggleForm()" id="toggle"></div>
 </div>
@@ -184,12 +191,15 @@ body{
 <div id="homePage">
 
 <div class="header">
-    <div class="logo"> Thư Viện Của Danh</div>
-    <button class="logout" onclick="logout()">Đăng xuất</button>
+    <div class="logo" id="homeTitle"></div>
+    <div class="header-right">
+        <div class="lang" onclick="switchLang()">🌐 <span id="langText2">VI</span></div>
+        <button class="logout" onclick="logout()" id="logoutBtn"></button>
+    </div>
 </div>
 
 <div class="search">
-    <input placeholder="🔍 Tìm kiếm code của bạn...">
+    <input id="searchInput">
 </div>
 
 <div class="grid">
@@ -199,14 +209,14 @@ body{
     <span class="tag">python</span>
     <div class="links">
         <a href="https://raw.githubusercontent.com/NightmarketServer/Locket/refs/heads/main/Locketgold-V10.module" target="_blank">📦 Modules</a>
-        <a onclick="copyModule()">📋 Sao chép</a>
-        <a href="locketgold.mobileconfig" target="_blank">⬇️ Tải DNS</a>
+        <a onclick="copyModule()" id="copyBtn"></a>
+        <a href="locketgold.mobileconfig" target="_blank" id="dnsBtn"></a>
     </div>
 </div>
 </div>
 
 <div class="social">
-    <a href="https://www.facebook.com/profile.php?id=61556788532608&locale=vi_VN" target="_blank">
+    <a href="https://www.facebook.com/profile.php?id=61556788532608" target="_blank">
         <img src="fb.png">
     </a>
     <a href="https://www.tiktok.com/@hoangducdanh1" target="_blank">
@@ -217,49 +227,101 @@ body{
 </div>
 
 <script>
-let isLogin=true,isVI=true;
+let isLogin = true;
+let isVI = localStorage.getItem("lang") !== "en";
+
+const text = {
+vi:{
+ titleLogin:"Chào mừng trở lại",
+ descLogin:"Đăng nhập để tiếp tục",
+ titleRegister:"Đăng ký",
+ descRegister:"Tạo tài khoản mới",
+ login:"Đăng nhập",
+ register:"Đăng ký",
+ toggleToRegister:"Chưa có tài khoản? Đăng ký",
+ toggleToLogin:"Đã có tài khoản? Đăng nhập",
+ home:"Thư Viện Của Danh",
+ logout:"Đăng xuất",
+ search:"🔍 Tìm kiếm code của bạn...",
+ copy:"📋 Sao chép",
+ dns:"⬇️ Tải DNS"
+},
+en:{
+ titleLogin:"Welcome Back",
+ descLogin:"Login to continue",
+ titleRegister:"Register",
+ descRegister:"Create new account",
+ login:"Login",
+ register:"Register",
+ toggleToRegister:"No account? Sign up",
+ toggleToLogin:"Have account? Login",
+ home:"Danh Library",
+ logout:"Logout",
+ search:"🔍 Search your code...",
+ copy:"📋 Copy",
+ dns:"⬇️ Download DNS"
+}
+};
 
 function updateText(){
-    title.innerText=isLogin?"Chào mừng trở lại":"Đăng ký";
-    desc.innerText=isLogin?"Đăng nhập để tiếp tục":"Tạo tài khoản mới";
-    btn.innerText=isLogin?"Đăng nhập":"Đăng ký";
-    toggle.innerText=isLogin?"Chưa có tài khoản? Đăng ký":"Đã có tài khoản? Đăng nhập";
+ const t = isVI ? text.vi : text.en;
+
+ title.innerText = isLogin ? t.titleLogin : t.titleRegister;
+ desc.innerText  = isLogin ? t.descLogin  : t.descRegister;
+ btn.innerText   = isLogin ? t.login : t.register;
+ toggle.innerText= isLogin ? t.toggleToRegister : t.toggleToLogin;
+
+ email.placeholder="Email";
+ password.placeholder="Password";
+
+ homeTitle.innerText = "📚 " + t.home;
+ logoutBtn.innerText = t.logout;
+ searchInput.placeholder = t.search;
+ copyBtn.innerText = t.copy;
+ dnsBtn.innerText = t.dns;
+
+ langText.innerText = isVI ? "VI" : "EN";
+ langText2.innerText = isVI ? "VI" : "EN";
 }
 
 function toggleForm(){isLogin=!isLogin;updateText();}
-function switchLang(){isVI=!isVI;}
+function switchLang(){
+ isVI=!isVI;
+ localStorage.setItem("lang",isVI?"vi":"en");
+ updateText();
+}
 
 function submitForm(){
-    let e=email.value.trim(),p=password.value.trim();
-    if(!e||!p) return alert("Nhập đầy đủ!");
+ let e=email.value.trim(),p=password.value.trim();
+ if(!e||!p) return alert("Nhập đầy đủ!");
 
-    if(isLogin){
-        if(localStorage.getItem("user_"+e)===p){
-            localStorage.setItem("login","true");
-            showHome();
-        }else alert("Sai tài khoản!");
-    }else{
-        localStorage.setItem("user_"+e,p);
-        alert("Đăng ký thành công!");
-        isLogin=true;updateText();
-    }
+ if(isLogin){
+  if(localStorage.getItem("user_"+e)===p){
+    localStorage.setItem("login","true");
+    showHome();
+  }else alert("Sai tài khoản!");
+ }else{
+  localStorage.setItem("user_"+e,p);
+  alert("Đăng ký thành công!");
+  isLogin=true;updateText();
+ }
 }
 
 function showHome(){
-    loginPage.style.display="none";
-    homePage.style.display="block";
+ loginPage.style.display="none";
+ homePage.style.display="block";
 }
 
 function logout(){
-    localStorage.removeItem("login");
-    location.reload();
+ localStorage.removeItem("login");
+ location.reload();
 }
 
 function copyModule(){
-    navigator.clipboard.writeText(
-      "https://raw.githubusercontent.com/NightmarketServer/Locket/refs/heads/main/Locketgold-V10.module"
-    );
-    alert("Đã sao chép!");
+ navigator.clipboard.writeText(
+ "https://raw.githubusercontent.com/NightmarketServer/Locket/refs/heads/main/Locketgold-V10.module"
+ );
+ alert("Copied!");
 }
 
 if(localStorage.getItem("login")==="true") showHome();
