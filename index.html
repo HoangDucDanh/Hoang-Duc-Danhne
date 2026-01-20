@@ -7,16 +7,44 @@
 <style>
 *{box-sizing:border-box;font-family:Segoe UI}
 
-/* ===== LOGIN ===== */
-body{
+/* ===== KHÓA SCROLL ===== */
+html,body{
+    width:100%;
+    height:100%;
     margin:0;
-    min-height:100vh;
-    background:radial-gradient(circle at top,#111b33,#070c18);
-    color:#fff;
+    overflow:hidden;
 }
 
+/* ===== BODY ===== */
+body{
+    background:radial-gradient(circle at top,#111b33,#070c18);
+    color:#fff;
+    position:relative;
+}
+
+/* ===== PAGE TRANSITION (FIX TRẮNG MÀN HÌNH) ===== */
+.page{
+    position:absolute;
+    inset:0;
+    width:100%;
+    height:100%;
+    opacity:0;
+    transform:scale(0.96);
+    transition:opacity .6s ease, transform .6s ease;
+    pointer-events:none;
+    visibility:hidden;
+}
+
+.page.show{
+    opacity:1;
+    transform:scale(1);
+    pointer-events:auto;
+    visibility:visible;
+    z-index:1;
+}
+
+/* ===== LOGIN ===== */
 #loginPage{
-    height:100vh;
     display:flex;
     justify-content:center;
     align-items:center;
@@ -51,7 +79,7 @@ body{
     backdrop-filter:blur(12px);
 }
 
-.lang{cursor:pointer;text-align:right;margin-bottom:10px}
+.lang{text-align:right;margin-bottom:10px;cursor:pointer}
 
 .login-box input{
     width:100%;
@@ -75,7 +103,10 @@ body{
 .toggle{text-align:center;margin-top:12px;cursor:pointer}
 
 /* ===== HOME ===== */
-#homePage{display:none}
+#homePage{
+    display:flex;
+    flex-direction:column;
+}
 
 .header{
     padding:20px 30px;
@@ -122,20 +153,17 @@ body{
     padding:20px;
     border-radius:20px;
 }
-
 .card img{
     width:54px;
     height:54px;
     border-radius:14px;
 }
-
 .tag{
     background:#4c8cff;
     padding:5px 12px;
     border-radius:10px;
     font-size:12px;
 }
-
 .links a{
     display:block;
     margin-top:8px;
@@ -143,7 +171,7 @@ body{
     cursor:pointer;
 }
 
-/* SOCIAL */
+/* ===== SOCIAL ===== */
 .social{
     position:fixed;
     bottom:8px;
@@ -151,7 +179,6 @@ body{
     display:flex;
     gap:12px;
 }
-
 .social a{
     width:46px;
     height:46px;
@@ -161,7 +188,6 @@ body{
     justify-content:center;
     align-items:center;
 }
-
 .social img{width:26px}
 </style>
 </head>
@@ -169,64 +195,52 @@ body{
 <body>
 
 <!-- ===== LOGIN ===== -->
-<div id="loginPage">
+<div id="loginPage" class="page show">
+    <div class="login-social">
+        <a href="https://www.facebook.com/profile.php?id=61556788532608" target="_blank">f</a>
+        <a href="https://www.tiktok.com/@hoangducdanh1" target="_blank">♪</a>
+    </div>
 
-<div class="login-social">
-    <a href="https://www.facebook.com/profile.php?id=61556788532608" target="_blank">f</a>
-    <a href="https://www.tiktok.com/@hoangducdanh1" target="_blank">♪</a>
-</div>
-
-<div class="login-box">
-    <div class="lang" onclick="switchLang()">🌐 <span id="langText">VI</span></div>
-    <h2 id="title"></h2>
-    <p id="desc"></p>
-    <input id="email" placeholder="Email">
-    <input id="password" type="password" placeholder="Password">
-    <button onclick="submitForm()" id="btn"></button>
-    <div class="toggle" onclick="toggleForm()" id="toggle"></div>
-</div>
+    <div class="login-box">
+        <div class="lang" onclick="switchLang()">🌐 <span id="langText">VI</span></div>
+        <h2 id="title"></h2>
+        <p id="desc"></p>
+        <input id="email" placeholder="Email">
+        <input id="password" type="password" placeholder="Password">
+        <button onclick="submitForm()" id="btn"></button>
+        <div class="toggle" onclick="toggleForm()" id="toggle"></div>
+    </div>
 </div>
 
 <!-- ===== HOME ===== -->
-<div id="homePage">
+<div id="homePage" class="page">
+    <div class="header">
+        <div class="logo" id="homeTitle"></div>
+        <div class="header-right">
+            <div class="lang" onclick="switchLang()">🌐 <span id="langText2">VI</span></div>
+            <button class="logout" onclick="logout()" id="logoutBtn"></button>
+        </div>
+    </div>
 
-<div class="header">
-    <div class="logo" id="homeTitle"></div>
-    <div class="header-right">
-        <div class="lang" onclick="switchLang()">🌐 <span id="langText2">VI</span></div>
-        <button class="logout" onclick="logout()" id="logoutBtn"></button>
+    <div class="search">
+        <input id="searchInput">
+    </div>
+
+    <div class="grid">
+        <div class="card">
+            <img src="locket.png">
+            <h3>Locket Gold</h3>
+            <span class="tag">python</span>
+            <div class="links">
+                <a href="https://raw.githubusercontent.com/NightmarketServer/Locket/refs/heads/main/Locketgold-V10.module" target="_blank">📦 Modules</a>
+                <a onclick="copyModule()" id="copyBtn"></a>
+                <a href="locketgold.mobileconfig" target="_blank" id="dnsBtn"></a>
+            </div>
+        </div>
     </div>
 </div>
 
-<div class="search">
-    <input id="searchInput">
-</div>
-
-<div class="grid">
-<div class="card">
-    <img src="locket.png">
-    <h3>Locket Gold</h3>
-    <span class="tag">python</span>
-    <div class="links">
-        <a href="https://raw.githubusercontent.com/NightmarketServer/Locket/refs/heads/main/Locketgold-V10.module" target="_blank">📦 Modules</a>
-        <a onclick="copyModule()" id="copyBtn"></a>
-        <a href="locketgold.mobileconfig" target="_blank" id="dnsBtn"></a>
-    </div>
-</div>
-</div>
-
-<div class="social">
-    <a href="https://www.facebook.com/profile.php?id=61556788532608" target="_blank">
-        <img src="fb.png">
-    </a>
-    <a href="https://www.tiktok.com/@hoangducdanh1" target="_blank">
-        <img src="tiktok.png">
-    </a>
-</div>
-
-</div>
-
-<!-- ===== FIREBASE ===== -->
+<!-- ===== FIREBASE + JS (GIỮ NGUYÊN LOGIC) ===== -->
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-app.js";
 import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-auth.js";
@@ -308,44 +322,30 @@ window.submitForm = ()=>{
  const p=password.value.trim();
  if(!e||!p) return alert("Nhập đầy đủ!");
 
- if(isLogin){
-  signInWithEmailAndPassword(auth,e,p)
-   .catch(err=>alert(err.message));
- }else{
-  createUserWithEmailAndPassword(auth,e,p)
-   .then(()=>alert("Đăng ký thành công!"))
-   .catch(err=>alert(err.message));
- }
+ isLogin
+ ? signInWithEmailAndPassword(auth,e,p).catch(err=>alert(err.message))
+ : createUserWithEmailAndPassword(auth,e,p).then(()=>alert("Đăng ký thành công!")).catch(err=>alert(err.message));
 }
 
 function showHome(){
- loginPage.style.display="none";
- homePage.style.display="block";
+ loginPage.classList.remove("show");
+ setTimeout(()=>homePage.classList.add("show"),150);
 }
 
-/* ===== FIX LOGOUT ===== */
 window.logout = ()=>{
  signOut(auth).then(()=>{
-   homePage.style.display="none";
-   loginPage.style.display="flex";
+   homePage.classList.remove("show");
+   setTimeout(()=>loginPage.classList.add("show"),150);
  });
 }
 
 window.copyModule = ()=>{
- navigator.clipboard.writeText(
- "https://raw.githubusercontent.com/NightmarketServer/Locket/refs/heads/main/Locketgold-V10.module"
- );
+ navigator.clipboard.writeText("https://raw.githubusercontent.com/NightmarketServer/Locket/refs/heads/main/Locketgold-V10.module");
  alert("Copied!");
 }
 
-/* ===== AUTH STATE ===== */
 onAuthStateChanged(auth,user=>{
- if(user){
-   showHome();
- }else{
-   homePage.style.display="none";
-   loginPage.style.display="flex";
- }
+ user ? showHome() : (homePage.classList.remove("show"),loginPage.classList.add("show"));
 });
 
 updateText();
