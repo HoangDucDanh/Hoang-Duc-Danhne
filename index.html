@@ -180,8 +180,8 @@ body{
     <div class="lang" onclick="switchLang()">🌐 <span id="langText">VI</span></div>
     <h2 id="title"></h2>
     <p id="desc"></p>
-    <input id="email">
-    <input id="password" type="password">
+    <input id="email" placeholder="Email">
+    <input id="password" type="password" placeholder="Password">
     <button onclick="submitForm()" id="btn"></button>
     <div class="toggle" onclick="toggleForm()" id="toggle"></div>
 </div>
@@ -226,7 +226,24 @@ body{
 
 </div>
 
-<script>
+<!-- ===== FIREBASE ===== -->
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-app.js";
+import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-auth.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyBvKKkHFHocNxQlw0TBBOEEyD57kpfQQT8",
+  authDomain: "hoangducdanh-cd721.firebaseapp.com",
+  projectId: "hoangducdanh-cd721",
+  storageBucket: "hoangducdanh-cd721.firebasestorage.app",
+  messagingSenderId: "167023468536",
+  appId: "1:167023468536:web:386c2e16b4e611a1fac00d"
+};
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+
+/* ===== LANGUAGE ===== */
 let isLogin = true;
 let isVI = localStorage.getItem("lang") !== "en";
 
@@ -265,45 +282,39 @@ en:{
 
 function updateText(){
  const t = isVI ? text.vi : text.en;
-
  title.innerText = isLogin ? t.titleLogin : t.titleRegister;
  desc.innerText  = isLogin ? t.descLogin  : t.descRegister;
  btn.innerText   = isLogin ? t.login : t.register;
  toggle.innerText= isLogin ? t.toggleToRegister : t.toggleToLogin;
-
- email.placeholder="Email";
- password.placeholder="Password";
-
  homeTitle.innerText = "📚 " + t.home;
  logoutBtn.innerText = t.logout;
  searchInput.placeholder = t.search;
  copyBtn.innerText = t.copy;
  dnsBtn.innerText = t.dns;
-
  langText.innerText = isVI ? "VI" : "EN";
  langText2.innerText = isVI ? "VI" : "EN";
 }
 
-function toggleForm(){isLogin=!isLogin;updateText();}
-function switchLang(){
+window.toggleForm = ()=>{isLogin=!isLogin;updateText();}
+window.switchLang = ()=>{
  isVI=!isVI;
  localStorage.setItem("lang",isVI?"vi":"en");
  updateText();
 }
 
-function submitForm(){
- let e=email.value.trim(),p=password.value.trim();
+/* ===== AUTH ===== */
+window.submitForm = ()=>{
+ const e=email.value.trim();
+ const p=password.value.trim();
  if(!e||!p) return alert("Nhập đầy đủ!");
 
  if(isLogin){
-  if(localStorage.getItem("user_"+e)===p){
-    localStorage.setItem("login","true");
-    showHome();
-  }else alert("Sai tài khoản!");
+  signInWithEmailAndPassword(auth,e,p)
+   .catch(err=>alert(err.message));
  }else{
-  localStorage.setItem("user_"+e,p);
-  alert("Đăng ký thành công!");
-  isLogin=true;updateText();
+  createUserWithEmailAndPassword(auth,e,p)
+   .then(()=>alert("Đăng ký thành công!"))
+   .catch(err=>alert(err.message));
  }
 }
 
@@ -312,19 +323,16 @@ function showHome(){
  homePage.style.display="block";
 }
 
-function logout(){
- localStorage.removeItem("login");
- location.reload();
-}
-
-function copyModule(){
- navigator.clipboard.writeText(
- "https://raw.githubusercontent.com/NightmarketServer/Locket/refs/heads/main/Locketgold-V10.module"
- );
+window.logout = ()=>signOut(auth);
+window.copyModule = ()=>{
+ navigator.clipboard.writeText("https://raw.githubusercontent.com/NightmarketServer/Locket/refs/heads/main/Locketgold-V10.module");
  alert("Copied!");
 }
 
-if(localStorage.getItem("login")==="true") showHome();
+onAuthStateChanged(auth,user=>{
+ if(user) showHome();
+});
+
 updateText();
 </script>
 
