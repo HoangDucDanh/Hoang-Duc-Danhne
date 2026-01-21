@@ -10,129 +10,99 @@
 
 /* ===== KHÓA SCROLL ===== */
 html,body{
-  width:100%;
-  height:100%;
-  margin:0;
-  overflow:hidden;
+    width:100%;
+    height:100%;
+    margin:0;
+    overflow:hidden;
 }
 
 /* ===== BODY ===== */
 body{
-  background:radial-gradient(circle at top,#111b33,#070c18);
-  color:#fff;
-  position:relative;
+    background:radial-gradient(circle at top,#111b33,#070c18);
+    color:#fff;
+    position:relative;
 }
 
-/* ✅ CHỐNG NHÁY LÚC LOAD (chưa cho transition chạy) */
-body:not(.is-ready) .page{
-  transition:none !important;
-}
-
-/* =======================================================
-   ✅ PAGE TRANSITION (KHÔNG BAO GIỜ TRỐNG MÀN)
-   - mặc định hidden bằng visibility
-   - is-active: hiện
-   - is-preenter: trang đích đã visible nhưng opacity 0 (chuẩn bị fade-in)
-   - is-leaving: trang nguồn fade-out (GIỮ is-active để browser có state 1 -> 0)
-   ======================================================= */
+/* ===== PAGE TRANSITION (✅ không trắng + mượt) ===== */
 .page{
-  position:absolute;
-  inset:0;
-  width:100%;
-  height:100%;
+    position:absolute;
+    inset:0;
+    width:100%;
+    height:100%;
+    opacity:0;
+    transform:scale(0.96);
+    transition:opacity .6s cubic-bezier(.4,0,.2,1), transform .6s cubic-bezier(.4,0,.2,1);
 
-  opacity:0;
-  transform:scale(.965);
-  transition:
-    opacity .65s cubic-bezier(.4,0,.2,1),
-    transform .65s cubic-bezier(.4,0,.2,1);
-
-  visibility:hidden;
-  pointer-events:none;
-  z-index:0;
+    display:none;              /* ✅ quan trọng: không show thì ẩn hẳn */
+    pointer-events:none;
+    visibility:hidden;
 }
 
-.page.is-active{
-  opacity:1;
-  transform:scale(1);
-  visibility:visible;
-  pointer-events:auto;
-  z-index:2;
+.page.show{
+    opacity:1;
+    transform:scale(1);
+
+    display:block;
+    pointer-events:auto;
+    visibility:visible;
+    z-index:1;
 }
 
-/* ✅ trang đích: visible sớm nhưng vẫn 0 để không bị “nhảy” */
-.page.is-preenter{
-  visibility:visible;
-  opacity:0;
-  transform:scale(.985);
-  pointer-events:none;
-  z-index:3;
+/* ✅ giữ layout đúng cho từng trang */
+#loginPage.show{
+    display:flex;
+    justify-content:center;
+    align-items:center;
 }
-
-/* ✅ trang nguồn rời đi: override opacity/transform */
-.page.is-leaving{
-  visibility:visible;
-  opacity:0;
-  transform:scale(.985);
-  pointer-events:none;
-  z-index:2;
-}
-
-/* ✅ GIỮ LAYOUT LUÔN (tránh nhảy layout) */
-#loginPage{
-  display:flex;
-  justify-content:center;
-  align-items:center;
-}
-#homePage{
-  display:flex;
-  flex-direction:column;
-
-  z-index:1;
+#homePage.show{
+    display:flex;
+    flex-direction:column;
 }
 
 /* =======================================================
    ✅ LOGIN BACKGROUND ANIMATION (Gradient + Particles)
    ======================================================= */
 #loginPage{
-  position:relative;
-  overflow:hidden;
+    justify-content:center;
+    align-items:center;
+    position:relative;
+    overflow:hidden;
 }
 
 /* canvas particles */
 #loginFx{
-  position:absolute;
-  inset:0;
-  width:100%;
-  height:100%;
-  z-index:0;
+    position:absolute;
+    inset:0;
+    width:100%;
+    height:100%;
+    z-index:0;
 }
 
 /* layer gradient animated */
 #loginPage::before{
-  content:"";
-  position:absolute;
-  inset:-40%;
-  background:
-    radial-gradient(circle at 20% 20%, rgba(110,80,255,.35), transparent 55%),
-    radial-gradient(circle at 80% 30%, rgba(0,200,255,.28), transparent 55%),
-    radial-gradient(circle at 40% 90%, rgba(255,0,200,.22), transparent 60%),
-    radial-gradient(circle at 70% 80%, rgba(0,255,140,.18), transparent 60%),
-    linear-gradient(120deg, #070c18, #0b1533, #070c18);
-  filter:saturate(1.15);
-  animation:loginGlow 10s ease-in-out infinite alternate;
-  z-index:0;
+    content:"";
+    position:absolute;
+    inset:-40%;
+    background:
+      radial-gradient(circle at 20% 20%, rgba(110,80,255,.35), transparent 55%),
+      radial-gradient(circle at 80% 30%, rgba(0,200,255,.28), transparent 55%),
+      radial-gradient(circle at 40% 90%, rgba(255,0,200,.22), transparent 60%),
+      radial-gradient(circle at 70% 80%, rgba(0,255,140,.18), transparent 60%),
+      linear-gradient(120deg, #070c18, #0b1533, #070c18);
+    filter:saturate(1.15);
+    animation:loginGlow 10s ease-in-out infinite alternate;
+    z-index:0;
 }
 
 /* optional background image blend */
 #loginPage::after{
-  content:"";
-  position:absolute;
-  inset:0;
-  background:url("25003.jpg") center/cover no-repeat;
-  opacity:.28;
-  filter:blur(0px) contrast(1.05) saturate(1.05);
-  z-index:0;
+    content:"";
+    position:absolute;
+    inset:0;
+    background:url("25003.jpg") center/cover no-repeat;
+    opacity:.28;
+    filter:blur(0px) contrast(1.05) saturate(1.05);
+    z-index:0;
 }
 
 @keyframes loginGlow{
@@ -143,73 +113,74 @@ body:not(.is-ready) .page{
 
 /* vignette */
 .login-vignette{
-  position:absolute;
-  inset:0;
-  background:radial-gradient(circle at center, transparent 45%, rgba(0,0,0,.55) 100%);
-  z-index:1;
-  pointer-events:none;
+    position:absolute;
+    inset:0;
+    background:radial-gradient(circle at center, transparent 45%, rgba(0,0,0,.55) 100%);
+    z-index:1;
+    pointer-events:none;
 }
 
 /* ===== LOGIN SOCIAL ===== */
 .login-social{
-  position:absolute;
-  top:20px;
-  right:20px;
-  display:flex;
-  gap:12px;
-  z-index:3;
+    position:absolute;
+    top:20px;
+    right:20px;
+    display:flex;
+    gap:12px;
+    z-index:3;
 }
 .login-social a{
-  width:42px;
-  height:42px;
-  background:rgba(255,255,255,.15);
-  border-radius:12px;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  color:white;
-  text-decoration:none;
-  font-size:20px;
-  backdrop-filter: blur(10px);
-  border:1px solid rgba(255,255,255,.15);
+    width:42px;
+    height:42px;
+    background:rgba(255,255,255,.15);
+    border-radius:12px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    color:white;
+    text-decoration:none;
+    font-size:20px;
+    backdrop-filter: blur(10px);
+    border:1px solid rgba(255,255,255,.15);
 }
 
 /* ===== LOGIN BOX ===== */
 .login-box{
-  width:360px;
-  padding:30px;
-  border-radius:22px;
-  background:rgba(255,255,255,.14);
-  border:1px solid rgba(255,255,255,.18);
-  backdrop-filter:blur(14px);
-  box-shadow:0 18px 45px rgba(0,0,0,.35);
-  z-index:2;
+    width:360px;
+    padding:30px;
+    border-radius:22px;
+    background:rgba(255,255,255,.14);
+    border:1px solid rgba(255,255,255,.18);
+    backdrop-filter:blur(14px);
+    box-shadow:0 18px 45px rgba(0,0,0,.35);
+    z-index:2;
 }
+
 .lang{text-align:right;margin-bottom:10px;cursor:pointer}
 
 .login-box input{
-  width:100%;
-  padding:12px;
-  margin-top:10px;
-  border-radius:12px;
-  border:none;
-  outline:none;
-  background:rgba(10,15,35,.55);
-  color:#fff;
-  border:1px solid rgba(255,255,255,.12);
+    width:100%;
+    padding:12px;
+    margin-top:10px;
+    border-radius:12px;
+    border:none;
+    outline:none;
+    background:rgba(10,15,35,.55);
+    color:#fff;
+    border:1px solid rgba(255,255,255,.12);
 }
 .login-box input::placeholder{color:rgba(255,255,255,.65)}
 
 .login-box button{
-  width:100%;
-  padding:12px;
-  margin-top:15px;
-  border:none;
-  border-radius:12px;
-  background:#6a5cff;
-  color:white;
-  cursor:pointer;
-  transition:.2s;
+    width:100%;
+    padding:12px;
+    margin-top:15px;
+    border:none;
+    border-radius:12px;
+    background:#6a5cff;
+    color:white;
+    cursor:pointer;
+    transition:.2s;
 }
 .login-box button:hover{filter:brightness(1.08)}
 .toggle{text-align:center;margin-top:12px;cursor:pointer}
@@ -218,138 +189,136 @@ body:not(.is-ready) .page{
    ✅ HOME BACKGROUND (Aurora + Stars + Noise + Vignette)
    ======================================================= */
 #homePage{
-  position:relative;
-  overflow:hidden;
-  background:
-    radial-gradient(circle at 18% 18%, rgba(0,200,255,.12), transparent 58%),
-    radial-gradient(circle at 82% 24%, rgba(122,92,255,.12), transparent 58%),
-    radial-gradient(circle at 70% 85%, rgba(255,0,212,.08), transparent 62%),
-    radial-gradient(circle at 28% 80%, rgba(0,255,133,.07), transparent 62%),
-    linear-gradient(120deg,#050814,#070c18,#0b1533,#060a14);
-
-  z-index:1;
+    position:relative;
+    overflow:hidden;
+    background:
+      radial-gradient(circle at 18% 18%, rgba(0,200,255,.12), transparent 58%),
+      radial-gradient(circle at 82% 24%, rgba(122,92,255,.12), transparent 58%),
+      radial-gradient(circle at 70% 85%, rgba(255,0,212,.08), transparent 62%),
+      radial-gradient(circle at 28% 80%, rgba(0,255,133,.07), transparent 62%),
+      linear-gradient(120deg,#050814,#070c18,#0b1533,#060a14);
 }
 
 /* stars */
 #homePage::before{
-  content:"";
-  position:absolute;
-  inset:0;
-  background:
-    radial-gradient(1px 1px at 10% 20%, rgba(255,255,255,.32) 50%, transparent 52%),
-    radial-gradient(1px 1px at 35% 70%, rgba(255,255,255,.22) 50%, transparent 52%),
-    radial-gradient(1px 1px at 80% 30%, rgba(255,255,255,.30) 50%, transparent 52%),
-    radial-gradient(1px 1px at 60% 90%, rgba(255,255,255,.18) 50%, transparent 52%),
-    radial-gradient(1px 1px at 92% 60%, rgba(255,255,255,.18) 50%, transparent 52%),
-    radial-gradient(1px 1px at 12% 58%, rgba(255,255,255,.14) 50%, transparent 52%),
-    radial-gradient(1px 1px at 28% 36%, rgba(255,255,255,.12) 50%, transparent 52%),
-    radial-gradient(1px 1px at 47% 18%, rgba(255,255,255,.12) 50%, transparent 52%),
-    radial-gradient(1px 1px at 73% 44%, rgba(255,255,255,.12) 50%, transparent 52%),
-    radial-gradient(1px 1px at 88% 12%, rgba(255,255,255,.12) 50%, transparent 52%),
-    radial-gradient(1px 1px at 15% 85%, rgba(255,255,255,.10) 50%, transparent 52%),
-    radial-gradient(1px 1px at 55% 55%, rgba(255,255,255,.10) 50%, transparent 52%);
-  opacity:.45;
-  filter: blur(.2px);
-  animation: starDrift 28s linear infinite;
-  z-index:0;
-  pointer-events:none;
+    content:"";
+    position:absolute;
+    inset:0;
+    background:
+      radial-gradient(1px 1px at 10% 20%, rgba(255,255,255,.32) 50%, transparent 52%),
+      radial-gradient(1px 1px at 35% 70%, rgba(255,255,255,.22) 50%, transparent 52%),
+      radial-gradient(1px 1px at 80% 30%, rgba(255,255,255,.30) 50%, transparent 52%),
+      radial-gradient(1px 1px at 60% 90%, rgba(255,255,255,.18) 50%, transparent 52%),
+      radial-gradient(1px 1px at 92% 60%, rgba(255,255,255,.18) 50%, transparent 52%),
+      radial-gradient(1px 1px at 12% 58%, rgba(255,255,255,.14) 50%, transparent 52%),
+      radial-gradient(1px 1px at 28% 36%, rgba(255,255,255,.12) 50%, transparent 52%),
+      radial-gradient(1px 1px at 47% 18%, rgba(255,255,255,.12) 50%, transparent 52%),
+      radial-gradient(1px 1px at 73% 44%, rgba(255,255,255,.12) 50%, transparent 52%),
+      radial-gradient(1px 1px at 88% 12%, rgba(255,255,255,.12) 50%, transparent 52%),
+      radial-gradient(1px 1px at 15% 85%, rgba(255,255,255,.10) 50%, transparent 52%),
+      radial-gradient(1px 1px at 55% 55%, rgba(255,255,255,.10) 50%, transparent 52%);
+    opacity:.45;
+    filter: blur(.2px);
+    animation: starDrift 28s linear infinite;
+    z-index:0;
+    pointer-events:none;
 }
 @keyframes starDrift{
-  0%{ transform: translate3d(0,0,0) scale(1); }
-  50%{ transform: translate3d(-14px,10px,0) scale(1.02); }
-  100%{ transform: translate3d(0,0,0) scale(1); }
+    0%{ transform: translate3d(0,0,0) scale(1); }
+    50%{ transform: translate3d(-14px,10px,0) scale(1.02); }
+    100%{ transform: translate3d(0,0,0) scale(1); }
 }
 
 /* aurora */
 .home-aurora{
-  position:absolute;
-  inset:-20%;
-  z-index:0;
-  filter: blur(34px) saturate(125%);
-  opacity:.90;
-  pointer-events:none;
+    position:absolute;
+    inset:-20%;
+    z-index:0;
+    filter: blur(34px) saturate(125%);
+    opacity:.90;
+    pointer-events:none;
 }
 .home-aurora .blob{
-  position:absolute;
-  width:540px; height:540px;
-  border-radius: 45% 55% 55% 45% / 45% 45% 55% 55%;
-  mix-blend-mode: screen;
-  opacity:.62;
-  animation: blobFloat 18s ease-in-out infinite;
+    position:absolute;
+    width:540px; height:540px;
+    border-radius: 45% 55% 55% 45% / 45% 45% 55% 55%;
+    mix-blend-mode: screen;
+    opacity:.62;
+    animation: blobFloat 18s ease-in-out infinite;
 }
 .home-aurora .b1{ left:10%; top:10%;
-  background:
-    radial-gradient(circle at 30% 30%, rgba(0,200,255,.85), transparent 60%),
-    radial-gradient(circle at 70% 70%, rgba(0,255,160,.55), transparent 62%);
-  animation-duration: 18s;
+    background:
+      radial-gradient(circle at 30% 30%, rgba(0,200,255,.85), transparent 60%),
+      radial-gradient(circle at 70% 70%, rgba(0,255,160,.55), transparent 62%);
+    animation-duration: 18s;
 }
 .home-aurora .b2{ left:58%; top:6%;
-  background:
-    radial-gradient(circle at 35% 35%, rgba(150,110,255,.80), transparent 60%),
-    radial-gradient(circle at 70% 65%, rgba(255,0,200,.48), transparent 62%);
-  animation-duration: 20s;
-  animation-delay: -4s;
+    background:
+      radial-gradient(circle at 35% 35%, rgba(150,110,255,.80), transparent 60%),
+      radial-gradient(circle at 70% 65%, rgba(255,0,200,.48), transparent 62%);
+    animation-duration: 20s;
+    animation-delay: -4s;
 }
 .home-aurora .b3{ left:48%; top:55%; width:640px; height:640px;
-  background:
-    radial-gradient(circle at 30% 30%, rgba(255,140,0,.20), transparent 62%),
-    radial-gradient(circle at 70% 70%, rgba(255,0,120,.55), transparent 60%);
-  animation-duration: 22s;
-  animation-delay: -7s;
+    background:
+      radial-gradient(circle at 30% 30%, rgba(255,140,0,.20), transparent 62%),
+      radial-gradient(circle at 70% 70%, rgba(255,0,120,.55), transparent 60%);
+    animation-duration: 22s;
+    animation-delay: -7s;
 }
 .home-aurora .b4{ left:6%; top:58%; width:580px; height:580px;
-  background:
-    radial-gradient(circle at 35% 35%, rgba(0,255,140,.55), transparent 60%),
-    radial-gradient(circle at 70% 70%, rgba(0,200,255,.25), transparent 62%);
-  animation-duration: 19s;
-  animation-delay: -10s;
+    background:
+      radial-gradient(circle at 35% 35%, rgba(0,255,140,.55), transparent 60%),
+      radial-gradient(circle at 70% 70%, rgba(0,200,255,.25), transparent 62%);
+    animation-duration: 19s;
+    animation-delay: -10s;
 }
 @keyframes blobFloat{
-  0%   { transform: translate3d(0,0,0) rotate(0deg) scale(1); }
-  25%  { transform: translate3d(60px,-20px,0) rotate(18deg) scale(1.05); }
-  50%  { transform: translate3d(40px,40px,0) rotate(0deg) scale(0.98); }
-  75%  { transform: translate3d(-30px,25px,0) rotate(-16deg) scale(1.04); }
-  100% { transform: translate3d(0,0,0) rotate(0deg) scale(1); }
+    0%   { transform: translate3d(0,0,0) rotate(0deg) scale(1); }
+    25%  { transform: translate3d(60px,-20px,0) rotate(18deg) scale(1.05); }
+    50%  { transform: translate3d(40px,40px,0) rotate(0deg) scale(0.98); }
+    75%  { transform: translate3d(-30px,25px,0) rotate(-16deg) scale(1.04); }
+    100% { transform: translate3d(0,0,0) rotate(0deg) scale(1); }
 }
 
 /* noise */
 .home-noise{
-  position:absolute; inset:0;
-  z-index:1;
-  pointer-events:none;
-  opacity:.10;
-  background-image:
-    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='240' height='240' filter='url(%23n)' opacity='.45'/%3E%3C/svg%3E");
-  mix-blend-mode: overlay;
-  animation: noiseMove 8s steps(6) infinite;
+    position:absolute; inset:0;
+    z-index:1;
+    pointer-events:none;
+    opacity:.10;
+    background-image:
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='240' height='240' filter='url(%23n)' opacity='.45'/%3E%3C/svg%3E");
+    mix-blend-mode: overlay;
+    animation: noiseMove 8s steps(6) infinite;
 }
 @keyframes noiseMove{
-  0%{ transform: translate3d(0,0,0); }
-  20%{ transform: translate3d(-2%,1%,0); }
-  40%{ transform: translate3d(3%,-1%,0); }
-  60%{ transform: translate3d(-1%,-2%,0); }
-  80%{ transform: translate3d(2%,2%,0); }
-  100%{ transform: translate3d(0,0,0); }
+    0%{ transform: translate3d(0,0,0); }
+    20%{ transform: translate3d(-2%,1%,0); }
+    40%{ transform: translate3d(3%,-1%,0); }
+    60%{ transform: translate3d(-1%,-2%,0); }
+    80%{ transform: translate3d(2%,2%,0); }
+    100%{ transform: translate3d(0,0,0); }
 }
 .home-vignette{
-  position:absolute; inset:0;
-  z-index:1;
-  pointer-events:none;
-  background: radial-gradient(circle at 50% 30%, transparent 40%, rgba(0,0,0,.45) 100%);
+    position:absolute; inset:0;
+    z-index:1;
+    pointer-events:none;
+    background: radial-gradient(circle at 50% 30%, transparent 40%, rgba(0,0,0,.45) 100%);
 }
 @media (prefers-reduced-motion: reduce){
-  #homePage::before, .home-aurora .blob, .home-noise{ animation:none !important; }
+    #homePage::before, .home-aurora .blob, .home-noise{ animation:none !important; }
 }
 
 /* ===== HOME UI ===== */
 .header{
-  padding:20px 30px;
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  border-bottom:1px solid rgba(255,255,255,.1);
-  position:relative;
-  z-index:3;
+    padding:20px 30px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    border-bottom:1px solid rgba(255,255,255,.1);
+    position:relative;
+    z-index:3;
 }
 .logo{font-size:26px;color:#4c8cff}
 .header-right{display:flex;gap:12px;align-items:center;}
@@ -357,31 +326,31 @@ body:not(.is-ready) .page{
 
 .search{padding:25px 30px; position:relative; z-index:3;}
 .search input{
-  width:100%;
-  padding:15px;
-  border-radius:16px;
-  border:none;
-  background: rgba(255,255,255,.10);
-  color:#fff;
-  outline:none;
-  backdrop-filter: blur(10px);
+    width:100%;
+    padding:15px;
+    border-radius:16px;
+    border:none;
+    background: rgba(255,255,255,.10);
+    color:#fff;
+    outline:none;
+    backdrop-filter: blur(10px);
 }
 
 .grid{
-  padding:20px 30px;
-  display:grid;
-  grid-template-columns:repeat(auto-fill,minmax(260px,1fr));
-  gap:20px;
-  position:relative; z-index:3;
+    padding:20px 30px;
+    display:grid;
+    grid-template-columns:repeat(auto-fill,minmax(260px,1fr));
+    gap:20px;
+    position:relative; z-index:3;
 }
 
 .card{
-  background:rgba(20,28,47,.72);
-  padding:20px;
-  border-radius:20px;
-  backdrop-filter: blur(12px);
-  border:1px solid rgba(255,255,255,.10);
-  box-shadow: 0 18px 45px rgba(0,0,0,.35);
+    background:rgba(20,28,47,.72);
+    padding:20px;
+    border-radius:20px;
+    backdrop-filter: blur(12px);
+    border:1px solid rgba(255,255,255,.10);
+    box-shadow: 0 18px 45px rgba(0,0,0,.35);
 }
 .card img{width:54px;height:54px;border-radius:14px;}
 .tag{background:#4c8cff;padding:5px 12px;border-radius:10px;font-size:12px;}
@@ -389,138 +358,130 @@ body:not(.is-ready) .page{
 
 /* social */
 .social{
-  position:fixed;bottom:8px;right:8px;display:flex;gap:12px;z-index:5;
+    position:fixed;bottom:8px;right:8px;display:flex;gap:12px;z-index:5;
 }
 .social a{
-  width:46px;height:46px;background:#141c2f;border-radius:14px;
-  display:flex;justify-content:center;align-items:center;
+    width:46px;height:46px;background:#141c2f;border-radius:14px;
+    display:flex;justify-content:center;align-items:center;
 }
 .social img{width:26px}
 
 /* neon menu */
 .neon-menu{
-  position:fixed;top:18px;left:50%;transform:translateX(-50%);
-  display:flex;gap:28px;padding:10px 28px;border-radius:999px;
-  background:rgba(10,15,35,.85);backdrop-filter:blur(12px);
-  z-index:10;isolation:isolate;
+    position:fixed;top:18px;left:50%;transform:translateX(-50%);
+    display:flex;gap:28px;padding:10px 28px;border-radius:999px;
+    background:rgba(10,15,35,.85);backdrop-filter:blur(12px);
+    z-index:10;isolation:isolate;
 }
 .neon-menu::before{
-  content:"";position:absolute;inset:-2px;border-radius:inherit;
-  background:linear-gradient(90deg,#ff004c,#ff9f00,#ffee00,#00ff85,#00c8ff,#7a5cff,#ff00d4,#ff004c);
-  background-size:400% 400%;
-  animation:rgb 6s linear infinite;
-  filter:blur(4px);
-  z-index:-1;opacity:.95;
+    content:"";position:absolute;inset:-2px;border-radius:inherit;
+    background:linear-gradient(90deg,#ff004c,#ff9f00,#ffee00,#00ff85,#00c8ff,#7a5cff,#ff00d4,#ff004c);
+    background-size:400% 400%;
+    animation:rgb 6s linear infinite;
+    filter:blur(4px);
+    z-index:-1;opacity:.95;
 }
 .neon-menu::after{
-  content:"";position:absolute;inset:1px;border-radius:inherit;
-  background:#0b1230;z-index:-1;
+    content:"";position:absolute;inset:1px;border-radius:inherit;
+    background:#0b1230;z-index:-1;
 }
 .neon-menu a{
-  color:#9ecbff;text-decoration:none;font-size:16px;font-weight:500;
-  position:relative;padding:6px 2px;cursor:pointer;transition:.25s;
+    color:#9ecbff;text-decoration:none;font-size:16px;font-weight:500;
+    position:relative;padding:6px 2px;cursor:pointer;transition:.25s;
 }
 .neon-menu a::after{
-  content:"";position:absolute;left:0;bottom:-6px;width:0;height:2px;
-  background:linear-gradient(90deg,#00c8ff,#7a5cff,#ff00d4);
-  border-radius:10px;transition:.25s;
+    content:"";position:absolute;left:0;bottom:-6px;width:0;height:2px;
+    background:linear-gradient(90deg,#00c8ff,#7a5cff,#ff00d4);
+    border-radius:10px;transition:.25s;
 }
 .neon-menu a:hover,
 .neon-menu a.active{color:#fff;text-shadow:0 0 8px rgba(120,180,255,.9);}
 .neon-menu a:hover::after,
 .neon-menu a.active::after{width:100%}
 @keyframes rgb{
-  0%{background-position:0% 50%}
-  50%{background-position:100% 50%}
-  100%{background-position:0% 50%}
+    0%{background-position:0% 50%}
+    50%{background-position:100% 50%}
+    100%{background-position:0% 50%}
 }
 
 .section{padding:20px 30px; position:relative; z-index:3;}
-
-.home-ui{
-  position:relative;
-  z-index:5;
-}
-
 </style>
 </head>
 
 <body>
 
 <!-- ===== LOGIN ===== -->
-<div id="loginPage" class="page is-active">
-  <canvas id="loginFx"></canvas>
-  <div class="login-vignette"></div>
+<div id="loginPage" class="page show">
+    <canvas id="loginFx"></canvas>
+    <div class="login-vignette"></div>
 
-  <div class="login-social">
-    <a href="https://www.facebook.com/profile.php?id=61556788532608" target="_blank">f</a>
-    <a href="https://www.tiktok.com/@hoangducdanh1" target="_blank">♪</a>
-  </div>
+    <div class="login-social">
+        <a href="https://www.facebook.com/profile.php?id=61556788532608" target="_blank">f</a>
+        <a href="https://www.tiktok.com/@hoangducdanh1" target="_blank">♪</a>
+    </div>
 
-  <div class="login-box">
-    <div class="lang" onclick="switchLang()">🌐 <span id="langText">VI</span></div>
-    <h2 id="title"></h2>
-    <p id="desc"></p>
-    <input id="email" placeholder="Email">
-    <input id="password" type="password" placeholder="Password">
-    <button onclick="submitForm()" id="btn"></button>
-    <div class="toggle" onclick="toggleForm()" id="toggle"></div>
-  </div>
+    <div class="login-box">
+        <div class="lang" onclick="switchLang()">🌐 <span id="langText">VI</span></div>
+        <h2 id="title"></h2>
+        <p id="desc"></p>
+        <input id="email" placeholder="Email">
+        <input id="password" type="password" placeholder="Password">
+        <button onclick="submitForm()" id="btn"></button>
+        <div class="toggle" onclick="toggleForm()" id="toggle"></div>
+    </div>
 </div>
 
 <!-- ===== HOME ===== -->
 <div id="homePage" class="page">
 
-  <div class="home-aurora" aria-hidden="true">
-    <div class="blob b1"></div>
-    <div class="blob b2"></div>
-    <div class="blob b3"></div>
-    <div class="blob b4"></div>
-  </div>
-  <div class="home-noise" aria-hidden="true"></div>
-  <div class="home-vignette" aria-hidden="true"></div>
-
-  <div class="home-ui">
-
-  <div class="neon-menu">
-    <a class="active" data-tab="modules">Modules</a>
-    <a data-tab="script">Script</a>
-  </div>
-
-  <div class="header">
-    <div class="logo" id="homeTitle"></div>
-    <div class="header-right">
-      <div class="lang" onclick="switchLang()">🌐 <span id="langText2">VI</span></div>
-      <button class="logout" onclick="logout()" id="logoutBtn"></button>
+    <div class="home-aurora" aria-hidden="true">
+      <div class="blob b1"></div>
+      <div class="blob b2"></div>
+      <div class="blob b3"></div>
+      <div class="blob b4"></div>
     </div>
-  </div>
+    <div class="home-noise" aria-hidden="true"></div>
+    <div class="home-vignette" aria-hidden="true"></div>
 
-  <div class="search">
-    <input id="searchInput">
-  </div>
-
-  <div class="grid">
-    <div class="card">
-      <img src="locket.png">
-      <h3>Locket Gold</h3>
-      <span class="tag">python</span>
-      <div class="links">
-        <a href="https://raw.githubusercontent.com/NightmarketServer/Locket/refs/heads/main/Locketgold-V10.module" target="_blank">📦 Modules</a>
-        <a onclick="copyModule()" id="copyBtn"></a>
-        <a href="locketgold.mobileconfig" target="_blank" id="dnsBtn"></a>
-      </div>
+    <div class="neon-menu">
+        <a class="active" data-tab="modules">Modules</a>
+        <a data-tab="script">Script</a>
     </div>
-  </div>
 
-  <div id="scriptSection" class="section" hidden>
-    <h2>Script</h2>
-    <p>Chỗ này bạn dán script/ghi chú/script download tùy bạn.</p>
-  </div>
+    <div class="header">
+        <div class="logo" id="homeTitle"></div>
+        <div class="header-right">
+            <div class="lang" onclick="switchLang()">🌐 <span id="langText2">VI</span></div>
+            <button class="logout" onclick="logout()" id="logoutBtn"></button>
+        </div>
+    </div>
 
-  <div class="social">
-    <a href="https://www.facebook.com/profile.php?id=61556788532608" target="_blank"><img src="fb.png"></a>
-    <a href="https://www.tiktok.com/@hoangducdanh1" target="_blank"><img src="tiktok.png"></a>
-  </div>
+    <div class="search">
+        <input id="searchInput">
+    </div>
+
+    <div class="grid">
+        <div class="card">
+            <img src="locket.png">
+            <h3>Locket Gold</h3>
+            <span class="tag">python</span>
+            <div class="links">
+                <a href="https://raw.githubusercontent.com/NightmarketServer/Locket/refs/heads/main/Locketgold-V10.module" target="_blank">📦 Modules</a>
+                <a onclick="copyModule()" id="copyBtn"></a>
+                <a href="locketgold.mobileconfig" target="_blank" id="dnsBtn"></a>
+            </div>
+        </div>
+    </div>
+
+    <div id="scriptSection" class="section" hidden>
+        <h2>Script</h2>
+        <p>Chỗ này bạn dán script/ghi chú/script download tùy bạn.</p>
+    </div>
+
+    <div class="social">
+        <a href="https://www.facebook.com/profile.php?id=61556788532608" target="_blank"><img src="fb.png"></a>
+        <a href="https://www.tiktok.com/@hoangducdanh1" target="_blank"><img src="tiktok.png"></a>
+    </div>
 </div>
 
 <script type="module">
@@ -546,7 +507,6 @@ const langText2   = document.getElementById("langText2");
 const grid        = document.querySelector("#homePage .grid");
 const scriptSection = document.getElementById("scriptSection");
 
-/* ✅ Firebase config */
 const firebaseConfig = {
   apiKey: "AIzaSyBvKKkHFHocNxQlw0TBBOEEyD57kpfQQT8",
   authDomain: "hoangducdanh-cd721.firebaseapp.com",
@@ -555,65 +515,43 @@ const firebaseConfig = {
   messagingSenderId: "167023468536",
   appId: "1:167023468536:web:386c2e16b4e611a1fac00d"
 };
+
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 
-/* ✅ bật transition sau khi render frame đầu */
-requestAnimationFrame(() => document.body.classList.add("is-ready"));
-
 /* =======================================================
-   ✅ TRANSITION FIX TRỐNG MÀN (CROSS-FADE CHẮC CHẮN)
-   QUY TẮC:
-   - KHÔNG remove is-active của fromEl ngay lập tức
-   - 1) toEl: add is-active + is-preenter (visible, opacity 0)
-   - 2) next frame: remove is-preenter => toEl fade-in
-   - 3) fromEl: add is-leaving (GIỮ is-active) => browser animate 1 -> 0 chắc chắn
-   - 4) end: remove is-active + is-leaving của fromEl
+   ✅ CHUYỂN TRANG MƯỢT: fade-out -> ẩn -> fade-in
    ======================================================= */
-let transitioning = false;
-
-function transitionTo(fromEl, toEl){
+function switchPage(fromEl, toEl){
   if(fromEl === toEl) return;
-  if(transitioning) return;
-  transitioning = true;
 
-  // dọn class cũ
-  [fromEl, toEl].forEach(el => el.classList.remove("is-leaving","is-preenter"));
+  // đảm bảo trang đích được show trước để transition chạy
+  toEl.classList.add("show");
 
-  // 1) bật trang đích visible NGAY (nhưng opacity 0)
-  toEl.classList.add("is-active","is-preenter");
-
-  // force reflow để chắc chắn browser "nhận" state opacity 0
-  void toEl.offsetWidth;
-
-  // 2) next frame: bắt đầu cross-fade thật
+  // ép browser nhận layout
   requestAnimationFrame(() => {
-    toEl.classList.remove("is-preenter");     // => fade in (0 -> 1)
-    fromEl.classList.add("is-leaving");       // => fade out (1 -> 0) (vì vẫn is-active)
-
-    const cleanup = () => {
-      fromEl.classList.remove("is-leaving","is-active");
-      transitioning = false;
-    };
-
-    const onEnd = (e) => {
-      if(e.propertyName !== "opacity") return;
-      fromEl.removeEventListener("transitionend", onEnd);
-      cleanup();
-    };
-
-    fromEl.addEventListener("transitionend", onEnd);
-
-    // fallback (phòng khi transitionend không bắn)
-    setTimeout(() => {
-      fromEl.removeEventListener("transitionend", onEnd);
-      cleanup();
-    }, 900);
+    // cho trang đích start từ trạng thái "ẩn" trước (opacity 0, scale 0.96)
+    // (vì .page mặc định vậy, nhưng khi add show nó thành 1 ngay,
+    // nên trick: remove rồi add lại theo frame)
+    toEl.classList.remove("show");
+    requestAnimationFrame(() => {
+      toEl.classList.add("show");
+    });
   });
-}
 
-function showHome(){ transitionTo(loginPage, homePage); }
-function showLogin(){ transitionTo(homePage, loginPage); }
+  // fade-out trang nguồn
+  if(fromEl.classList.contains("show")){
+    fromEl.classList.remove("show");
+
+    // chờ animation xong mới ẩn hẳn để không che
+    const onEnd = (ev) => {
+      if(ev.propertyName !== "opacity") return;
+      fromEl.removeEventListener("transitionend", onEnd);
+      // đảm bảo ẩn hẳn (display none do không show)
+    };
+    fromEl.addEventListener("transitionend", onEnd);
+  }
+}
 
 /* ===== LANGUAGE ===== */
 let isLogin = true;
@@ -700,6 +638,13 @@ window.submitForm = ()=>{
   }
 };
 
+function showHome(){
+  switchPage(loginPage, homePage);
+}
+function showLogin(){
+  switchPage(homePage, loginPage);
+}
+
 window.logout = ()=>{
   signOut(auth).then(()=> showLogin());
 };
@@ -710,12 +655,11 @@ window.copyModule = ()=>{
 };
 
 onAuthStateChanged(auth, user=>{
-  const go = () => user ? showHome() : showLogin();
-  if(document.body.classList.contains("is-ready")) go();
-  else requestAnimationFrame(go);
+  if(user) showHome();
+  else showLogin();
 });
 
-/* ===== MENU CLICK ===== */
+/* ===== MENU CLICK (Modules / Script) ===== */
 const menuLinks = document.querySelectorAll("#homePage .neon-menu a");
 menuLinks.forEach(link=>{
   link.onclick = ()=>{
@@ -736,7 +680,7 @@ menuLinks.forEach(link=>{
 updateText();
 
 /* =======================================================
-   ✅ CANVAS PARTICLES LOGIN FX
+   ✅ CANVAS PARTICLES LOGIN FX (GIỮ NGUYÊN)
    ======================================================= */
 const canvas = document.getElementById("loginFx");
 const ctx = canvas.getContext("2d", { alpha: true });
@@ -758,7 +702,7 @@ function rand(a,b){ return a + Math.random()*(b-a); }
 
 function makeParticles(){
   const count = Math.floor((W*H)/45000);
-  particles = new Array(Math.max(50, Math.min(130, count))).fill(0).map(() => ({
+  particles = new Array(Math.max(50, Math.min(130, count))).fill(0).map(()=>({
     x: rand(0,W),
     y: rand(0,H),
     r: rand(0.8, 2.2),
@@ -771,11 +715,7 @@ function makeParticles(){
 function draw(){
   if(!running) return;
 
-  // ✅ chỉ chạy khi login đang active hoặc đang leaving (để transition mượt)
-  const onLogin =
-    loginPage.classList.contains("is-active") ||
-    loginPage.classList.contains("is-leaving");
-
+  const onLogin = loginPage.classList.contains("show");
   if(!onLogin){
     ctx.clearRect(0,0,W,H);
     requestAnimationFrame(draw);
@@ -829,9 +769,8 @@ resize();
 makeParticles();
 draw();
 
-/* ✅ Khi quay về login thì regen particles cho đúng size */
 const observer = new MutationObserver(()=>{
-  if(loginPage.classList.contains("is-active")){
+  if(loginPage.classList.contains("show")){
     resize();
     makeParticles();
   }
@@ -842,7 +781,7 @@ observer.observe(loginPage, { attributes:true, attributeFilter:["class"] });
 const aurora = document.querySelector(".home-aurora");
 if(aurora){
   window.addEventListener("mousemove", (e) => {
-    if(!homePage.classList.contains("is-active")) return;
+    if(!homePage.classList.contains("show")) return;
     const x = (e.clientX / window.innerWidth - 0.5) * 18;
     const y = (e.clientY / window.innerHeight - 0.5) * 14;
     aurora.style.transform = `translate3d(${x}px, ${y}px, 0)`;
