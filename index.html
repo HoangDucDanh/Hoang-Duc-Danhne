@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <title>Danh Web</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 
 <style>
 *{box-sizing:border-box;font-family:Segoe UI}
@@ -43,20 +44,76 @@ body{
     z-index:1;
 }
 
-/* ===== LOGIN ===== */
+/* =======================================================
+   ✅ LOGIN BACKGROUND ANIMATION (Gradient + Particles)
+   ======================================================= */
 #loginPage{
     display:flex;
     justify-content:center;
     align-items:center;
-    background:url("25003.jpg") center/cover no-repeat;
+    position:relative;
+    overflow:hidden;
 }
 
+/* canvas particles */
+#loginFx{
+    position:absolute;
+    inset:0;
+    width:100%;
+    height:100%;
+    z-index:0;
+}
+
+/* layer gradient animated */
+#loginPage::before{
+    content:"";
+    position:absolute;
+    inset:-40%;
+    background:
+      radial-gradient(circle at 20% 20%, rgba(110,80,255,.35), transparent 55%),
+      radial-gradient(circle at 80% 30%, rgba(0,200,255,.28), transparent 55%),
+      radial-gradient(circle at 40% 90%, rgba(255,0,200,.22), transparent 60%),
+      radial-gradient(circle at 70% 80%, rgba(0,255,140,.18), transparent 60%),
+      linear-gradient(120deg, #070c18, #0b1533, #070c18);
+    filter:saturate(1.15);
+    animation:loginGlow 10s ease-in-out infinite alternate;
+    z-index:0;
+}
+
+/* optional background image blend (giữ ảnh của bạn nhưng làm mịn) */
+#loginPage::after{
+    content:"";
+    position:absolute;
+    inset:0;
+    background:url("25003.jpg") center/cover no-repeat;
+    opacity:.28;            /* giảm để không che hiệu ứng */
+    filter:blur(0px) contrast(1.05) saturate(1.05);
+    z-index:0;
+}
+
+@keyframes loginGlow{
+  0%{transform:translate3d(-2%, -2%, 0) rotate(0deg) scale(1.02)}
+  50%{transform:translate3d(2%, 1%, 0) rotate(6deg) scale(1.05)}
+  100%{transform:translate3d(0%, 2%, 0) rotate(-4deg) scale(1.03)}
+}
+
+/* thêm chút vignette cho sang */
+.login-vignette{
+    position:absolute;
+    inset:0;
+    background:radial-gradient(circle at center, transparent 45%, rgba(0,0,0,.55) 100%);
+    z-index:1;
+    pointer-events:none;
+}
+
+/* ===== LOGIN SOCIAL ===== */
 .login-social{
     position:absolute;
     top:20px;
     right:20px;
     display:flex;
     gap:12px;
+    z-index:3;
 }
 .login-social a{
     width:42px;
@@ -69,14 +126,20 @@ body{
     color:white;
     text-decoration:none;
     font-size:20px;
+    backdrop-filter: blur(10px);
+    border:1px solid rgba(255,255,255,.15);
 }
 
+/* ===== LOGIN BOX (đẹp hơn 1 chút) ===== */
 .login-box{
     width:360px;
     padding:30px;
-    border-radius:20px;
-    background:rgba(255,255,255,.2);
-    backdrop-filter:blur(12px);
+    border-radius:22px;
+    background:rgba(255,255,255,.14);
+    border:1px solid rgba(255,255,255,.18);
+    backdrop-filter:blur(14px);
+    box-shadow:0 18px 45px rgba(0,0,0,.35);
+    z-index:2;
 }
 
 .lang{text-align:right;margin-bottom:10px;cursor:pointer}
@@ -85,9 +148,14 @@ body{
     width:100%;
     padding:12px;
     margin-top:10px;
-    border-radius:10px;
+    border-radius:12px;
     border:none;
+    outline:none;
+    background:rgba(10,15,35,.55);
+    color:#fff;
+    border:1px solid rgba(255,255,255,.12);
 }
+.login-box input::placeholder{color:rgba(255,255,255,.65)}
 
 .login-box button{
     width:100%;
@@ -98,7 +166,9 @@ body{
     background:#6a5cff;
     color:white;
     cursor:pointer;
+    transition:.2s;
 }
+.login-box button:hover{filter:brightness(1.08)}
 
 .toggle{text-align:center;margin-top:12px;cursor:pointer}
 
@@ -190,6 +260,83 @@ body{
     align-items:center;
 }
 .social img{width:26px}
+
+/* =======================================================
+   ✅ NEON MENU (Modules + Script, LED RGB)
+   ======================================================= */
+.neon-menu{
+    position:fixed;
+    top:18px;
+    left:50%;
+    transform:translateX(-50%);
+    display:flex;
+    gap:28px;
+    padding:10px 28px;
+    border-radius:999px;
+    background:rgba(10,15,35,.85);
+    backdrop-filter:blur(12px);
+    z-index:10;
+    isolation:isolate;
+}
+.neon-menu::before{
+    content:"";
+    position:absolute;
+    inset:-2px;
+    border-radius:inherit;
+    background:linear-gradient(
+        90deg,
+        #ff004c,#ff9f00,#ffee00,#00ff85,#00c8ff,#7a5cff,#ff00d4,#ff004c
+    );
+    background-size:400% 400%;
+    animation:rgb 6s linear infinite;
+    filter:blur(4px);
+    z-index:-1;
+    opacity:.95;
+}
+.neon-menu::after{
+    content:"";
+    position:absolute;
+    inset:1px;
+    border-radius:inherit;
+    background:#0b1230;
+    z-index:-1;
+}
+.neon-menu a{
+    color:#9ecbff;
+    text-decoration:none;
+    font-size:16px;
+    font-weight:500;
+    position:relative;
+    padding:6px 2px;
+    cursor:pointer;
+    transition:.25s;
+}
+.neon-menu a::after{
+    content:"";
+    position:absolute;
+    left:0;
+    bottom:-6px;
+    width:0;
+    height:2px;
+    background:linear-gradient(90deg,#00c8ff,#7a5cff,#ff00d4);
+    border-radius:10px;
+    transition:.25s;
+}
+.neon-menu a:hover,
+.neon-menu a.active{
+    color:#fff;
+    text-shadow:0 0 8px rgba(120,180,255,.9);
+}
+.neon-menu a:hover::after,
+.neon-menu a.active::after{width:100%}
+@keyframes rgb{
+    0%{background-position:0% 50%}
+    50%{background-position:100% 50%}
+    100%{background-position:0% 50%}
+}
+
+/* ===== SECTION ===== */
+.section{padding:20px 30px}
 </style>
 </head>
 
@@ -197,6 +344,10 @@ body{
 
 <!-- ===== LOGIN ===== -->
 <div id="loginPage" class="page show">
+    <!-- ✅ Animated particles -->
+    <canvas id="loginFx"></canvas>
+    <div class="login-vignette"></div>
+
     <div class="login-social">
         <a href="https://www.facebook.com/profile.php?id=61556788532608" target="_blank">f</a>
         <a href="https://www.tiktok.com/@hoangducdanh1" target="_blank">♪</a>
@@ -215,6 +366,12 @@ body{
 
 <!-- ===== HOME ===== -->
 <div id="homePage" class="page">
+
+    <div class="neon-menu">
+        <a class="active">Modules</a>
+        <a>Script</a>
+    </div>
+
     <div class="header">
         <div class="logo" id="homeTitle"></div>
         <div class="header-right">
@@ -240,7 +397,11 @@ body{
         </div>
     </div>
 
-    <!-- SOCIAL HOME -->
+    <div id="scriptSection" class="section" hidden>
+        <h2>Script</h2>
+        <p>Chỗ này bạn dán script/ghi chú/script download tùy bạn.</p>
+    </div>
+
     <div class="social">
         <a href="https://www.facebook.com/profile.php?id=61556788532608" target="_blank">
             <img src="fb.png">
@@ -251,7 +412,6 @@ body{
     </div>
 </div>
 
-<!-- ===== FIREBASE + JS ===== -->
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-app.js";
 import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-auth.js";
@@ -286,7 +446,9 @@ vi:{
  logout:"Đăng xuất",
  search:"🔍 Tìm kiếm code của bạn...",
  copy:"📋 Sao chép",
- dns:"⬇️ Tải DNS"
+ dns:"⬇️ Tải DNS",
+ menuModules:"Modules",
+ menuScript:"Script"
 },
 en:{
  titleLogin:"Welcome Back",
@@ -301,7 +463,9 @@ en:{
  logout:"Logout",
  search:"🔍 Search your code...",
  copy:"📋 Copy",
- dns:"⬇️ Download DNS"
+ dns:"⬇️ Download DNS",
+ menuModules:"Modules",
+ menuScript:"Script"
 }
 };
 
@@ -311,13 +475,19 @@ function updateText(){
  desc.innerText  = isLogin ? t.descLogin  : t.descRegister;
  btn.innerText   = isLogin ? t.login : t.register;
  toggle.innerText= isLogin ? t.toggleToRegister : t.toggleToLogin;
+
  homeTitle.innerText = "📚 " + t.home;
  logoutBtn.innerText = t.logout;
  searchInput.placeholder = t.search;
  copyBtn.innerText = t.copy;
  dnsBtn.innerText = t.dns;
+
  langText.innerText = isVI ? "VI" : "EN";
  langText2.innerText = isVI ? "VI" : "EN";
+
+ const menuLinks = document.querySelectorAll(".neon-menu a");
+ if(menuLinks[0]) menuLinks[0].innerText = t.menuModules;
+ if(menuLinks[1]) menuLinks[1].innerText = t.menuScript;
 }
 
 window.toggleForm = ()=>{isLogin=!isLogin;updateText();}
@@ -359,7 +529,131 @@ onAuthStateChanged(auth,user=>{
  user ? showHome() : (homePage.classList.remove("show"),loginPage.classList.add("show"));
 });
 
+/* ===== MENU CLICK (Modules / Script) ===== */
+const menuLinks = document.querySelectorAll(".neon-menu a");
+const grid = document.querySelector(".grid");
+const scriptSection = document.getElementById("scriptSection");
+
+menuLinks.forEach(link=>{
+ link.onclick=()=>{
+  menuLinks.forEach(l=>l.classList.remove("active"));
+  link.classList.add("active");
+
+  scriptSection.hidden = true;
+
+  if(link.innerText === "Modules"){
+    grid.style.display="grid";
+  }else{
+    grid.style.display="none";
+    scriptSection.hidden=false;
+  }
+ };
+});
+
 updateText();
+
+/* =======================================================
+   ✅ CANVAS PARTICLES LOGIN FX
+   ======================================================= */
+const canvas = document.getElementById("loginFx");
+const ctx = canvas.getContext("2d", { alpha: true });
+
+let W = 0, H = 0, dpr = Math.max(1, Math.min(2, window.devicePixelRatio || 1));
+let particles = [];
+let running = true;
+
+function resize(){
+  W = canvas.clientWidth;
+  H = canvas.clientHeight;
+  canvas.width = Math.floor(W * dpr);
+  canvas.height = Math.floor(H * dpr);
+  ctx.setTransform(dpr,0,0,dpr,0,0);
+}
+window.addEventListener("resize", resize);
+
+function rand(a,b){ return a + Math.random()*(b-a); }
+
+function makeParticles(){
+  const count = Math.floor((W*H)/45000); // tự scale theo màn hình
+  particles = new Array(Math.max(50, Math.min(130, count))).fill(0).map(()=>({
+    x: rand(0,W),
+    y: rand(0,H),
+    r: rand(0.8, 2.2),
+    vx: rand(-0.18, 0.18),
+    vy: rand(-0.12, 0.22),
+    a: rand(0.18, 0.55),
+  }));
+}
+
+function draw(){
+  if(!running) return;
+
+  // chỉ chạy khi đang ở loginPage (đỡ tốn)
+  const onLogin = loginPage.classList.contains("show");
+  if(!onLogin){
+    ctx.clearRect(0,0,W,H);
+    requestAnimationFrame(draw);
+    return;
+  }
+
+  ctx.clearRect(0,0,W,H);
+
+  // glow mờ
+  const g = ctx.createRadialGradient(W*0.5,H*0.2, 0, W*0.5,H*0.2, Math.max(W,H));
+  g.addColorStop(0, "rgba(120,180,255,0.10)");
+  g.addColorStop(1, "rgba(0,0,0,0)");
+  ctx.fillStyle = g;
+  ctx.fillRect(0,0,W,H);
+
+  // particles
+  for(const p of particles){
+    p.x += p.vx; p.y += p.vy;
+
+    if(p.x < -20) p.x = W+20;
+    if(p.x > W+20) p.x = -20;
+    if(p.y < -20) p.y = H+20;
+    if(p.y > H+20) p.y = -20;
+
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, p.r, 0, Math.PI*2);
+    ctx.fillStyle = `rgba(160,200,255,${p.a})`;
+    ctx.fill();
+  }
+
+  // nối line nhẹ giữa hạt gần nhau
+  for(let i=0;i<particles.length;i++){
+    for(let j=i+1;j<particles.length;j++){
+      const a = particles[i], b = particles[j];
+      const dx = a.x-b.x, dy = a.y-b.y;
+      const dist = Math.sqrt(dx*dx+dy*dy);
+      if(dist < 90){
+        ctx.globalAlpha = (1 - dist/90) * 0.22;
+        ctx.strokeStyle = "rgba(120,180,255,1)";
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.moveTo(a.x,a.y);
+        ctx.lineTo(b.x,b.y);
+        ctx.stroke();
+        ctx.globalAlpha = 1;
+      }
+    }
+  }
+
+  requestAnimationFrame(draw);
+}
+
+resize();
+makeParticles();
+draw();
+
+// regenerate when entering login again
+const observer = new MutationObserver(()=>{
+  if(loginPage.classList.contains("show")){
+    resize();
+    makeParticles();
+  }
+});
+observer.observe(loginPage, { attributes:true, attributeFilter:["class"] });
 </script>
 
 </body>
