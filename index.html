@@ -23,10 +23,17 @@ body{
   position:relative;
 }
 
+/* ✅ CHỐNG NHÁY LÚC LOAD (chưa cho transition chạy) */
+body:not(.is-ready) .page{
+  transition:none !important;
+}
+
 /* =======================================================
-   ✅ PAGE TRANSITION (KHÔNG BAO GIỜ TRẮNG MÀN)
-   - Không dùng visibility (tránh bug trắng màn trên GitHub Pages)
-   - Chỉ dùng opacity + pointer-events + z-index
+   ✅ PAGE TRANSITION (KHÔNG BAO GIỜ TRỐNG MÀN)
+   - mặc định hidden bằng visibility
+   - is-active: hiện
+   - is-preenter: trang đích đã visible nhưng opacity 0 (chuẩn bị fade-in)
+   - is-leaving: trang nguồn fade-out (GIỮ is-active để browser có state 1 -> 0)
    ======================================================= */
 .page{
   position:absolute;
@@ -35,11 +42,12 @@ body{
   height:100%;
 
   opacity:0;
-  transform:scale(.97);
+  transform:scale(.965);
   transition:
     opacity .65s cubic-bezier(.4,0,.2,1),
     transform .65s cubic-bezier(.4,0,.2,1);
 
+  visibility:hidden;
   pointer-events:none;
   z-index:0;
 }
@@ -47,7 +55,26 @@ body{
 .page.is-active{
   opacity:1;
   transform:scale(1);
+  visibility:visible;
   pointer-events:auto;
+  z-index:2;
+}
+
+/* ✅ trang đích: visible sớm nhưng vẫn 0 để không bị “nhảy” */
+.page.is-preenter{
+  visibility:visible;
+  opacity:0;
+  transform:scale(.985);
+  pointer-events:none;
+  z-index:3;
+}
+
+/* ✅ trang nguồn rời đi: override opacity/transform */
+.page.is-leaving{
+  visibility:visible;
+  opacity:0;
+  transform:scale(.985);
+  pointer-events:none;
   z-index:2;
 }
 
@@ -60,11 +87,11 @@ body{
 #homePage{
   display:flex;
   flex-direction:column;
+
+  z-index:1;
 }
 
 /* =======================================================
-   ✅ LOGIN BACKGROUND ANIMATION (Gradient + Particles)
-   ======================================================= *//* =======================================================
    ✅ LOGIN BACKGROUND ANIMATION (Gradient + Particles)
    ======================================================= */
 #loginPage{
@@ -199,6 +226,8 @@ body{
     radial-gradient(circle at 70% 85%, rgba(255,0,212,.08), transparent 62%),
     radial-gradient(circle at 28% 80%, rgba(0,255,133,.07), transparent 62%),
     linear-gradient(120deg,#050814,#070c18,#0b1533,#060a14);
+
+  z-index:1;
 }
 
 /* stars */
@@ -407,6 +436,12 @@ body{
 }
 
 .section{padding:20px 30px; position:relative; z-index:3;}
+
+.home-ui{
+  position:relative;
+  z-index:5;
+}
+
 </style>
 </head>
 
@@ -444,6 +479,8 @@ body{
   </div>
   <div class="home-noise" aria-hidden="true"></div>
   <div class="home-vignette" aria-hidden="true"></div>
+
+  <div class="home-ui">
 
   <div class="neon-menu">
     <a class="active" data-tab="modules">Modules</a>
@@ -522,25 +559,61 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 
 /* ✅ bật transition sau khi render frame đầu */
+requestAnimationFrame(() => document.body.classList.add("is-ready"));
+
 /* =======================================================
-   ✅ TRANSITION (KHÔNG BAO GIỜ TRẮNG MÀN)
-   - Không dùng visibility / entering / leaving
-   - Chỉ bật/tắt .is-active => CSS tự fade
+   ✅ TRANSITION FIX TRỐNG MÀN (CROSS-FADE CHẮC CHẮN)
+   QUY TẮC:
+   - KHÔNG remove is-active của fromEl ngay lập tức
+   - 1) toEl: add is-active + is-preenter (visible, opacity 0)
+   - 2) next frame: remove is-preenter => toEl fade-in
+   - 3) fromEl: add is-leaving (GIỮ is-active) => browser animate 1 -> 0 chắc chắn
+   - 4) end: remove is-active + is-leaving của fromEl
    ======================================================= */
-/* =======================================================
-   ✅ TRANSITION (CHỐNG TRỐNG MÀN 100%)
-   - Bật trang đích trước, rồi frame sau mới tắt trang nguồn
-   - Không dùng visibility/entering/leaving
-   ======================================================= */
-function showHome(){
-  homePage.classList.add("is-active");
-  requestAnimationFrame(() => loginPage.classList.remove("is-active"));
+let transitioning = false;
+
+function transitionTo(fromEl, toEl){
+  if(fromEl === toEl) return;
+  if(transitioning) return;
+  transitioning = true;
+
+  // dọn class cũ
+  [fromEl, toEl].forEach(el => el.classList.remove("is-leaving","is-preenter"));
+
+  // 1) bật trang đích visible NGAY (nhưng opacity 0)
+  toEl.classList.add("is-active","is-preenter");
+
+  // force reflow để chắc chắn browser "nhận" state opacity 0
+  void toEl.offsetWidth;
+
+  // 2) next frame: bắt đầu cross-fade thật
+  requestAnimationFrame(() => {
+    toEl.classList.remove("is-preenter");     // => fade in (0 -> 1)
+    fromEl.classList.add("is-leaving");       // => fade out (1 -> 0) (vì vẫn is-active)
+
+    const cleanup = () => {
+      fromEl.classList.remove("is-leaving","is-active");
+      transitioning = false;
+    };
+
+    const onEnd = (e) => {
+      if(e.propertyName !== "opacity") return;
+      fromEl.removeEventListener("transitionend", onEnd);
+      cleanup();
+    };
+
+    fromEl.addEventListener("transitionend", onEnd);
+
+    // fallback (phòng khi transitionend không bắn)
+    setTimeout(() => {
+      fromEl.removeEventListener("transitionend", onEnd);
+      cleanup();
+    }, 900);
+  });
 }
 
-function showLogin(){
-  loginPage.classList.add("is-active");
-  requestAnimationFrame(() => homePage.classList.remove("is-active"));
-}
+function showHome(){ transitionTo(loginPage, homePage); }
+function showLogin(){ transitionTo(homePage, loginPage); }
 
 /* ===== LANGUAGE ===== */
 let isLogin = true;
@@ -636,7 +709,12 @@ window.copyModule = ()=>{
   alert("Copied!");
 };
 
-onAuthStateChanged(auth, user=>{ if(user) showHome(); else showLogin(); });
+onAuthStateChanged(auth, user=>{
+  const go = () => user ? showHome() : showLogin();
+  if(document.body.classList.contains("is-ready")) go();
+  else requestAnimationFrame(go);
+});
+
 /* ===== MENU CLICK ===== */
 const menuLinks = document.querySelectorAll("#homePage .neon-menu a");
 menuLinks.forEach(link=>{
@@ -694,7 +772,9 @@ function draw(){
   if(!running) return;
 
   // ✅ chỉ chạy khi login đang active hoặc đang leaving (để transition mượt)
-  const onLogin = loginPage.classList.contains("is-active");
+  const onLogin =
+    loginPage.classList.contains("is-active") ||
+    loginPage.classList.contains("is-leaving");
 
   if(!onLogin){
     ctx.clearRect(0,0,W,H);
