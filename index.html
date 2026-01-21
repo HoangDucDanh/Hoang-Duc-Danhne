@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-<meta charset="UTF-8">
+<meta charset="UTF-8" />
 <title>Danh Web</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 
@@ -10,85 +10,115 @@
 
 /* ===== KHÓA SCROLL ===== */
 html,body{
-    width:100%;
-    height:100%;
-    margin:0;
-    overflow:hidden;
+  width:100%;
+  height:100%;
+  margin:0;
+  overflow:hidden;
 }
 
 /* ===== BODY ===== */
 body{
-    background:radial-gradient(circle at top,#111b33,#070c18);
-    color:#fff;
-    position:relative;
+  background:radial-gradient(circle at top,#111b33,#070c18);
+  color:#fff;
+  position:relative;
 }
 
-/* ===== PAGE TRANSITION ===== */
+/* ✅ CHỐNG NHÁY LÚC LOAD (chưa cho transition chạy) */
+body:not(.is-ready) .page{
+  transition:none !important;
+}
+
+/* =======================================================
+   ✅ PAGE TRANSITION KHÔNG TRỐNG MÀN (FIX CHẮC)
+   - KHÔNG dùng visibility:hidden
+   - Luôn render cả 2 page, chỉ đổi opacity + z-index
+   ======================================================= */
 .page{
-    position:absolute;
-    inset:0;
-    width:100%;
-    height:100%;
-    opacity:0;
-    transform:scale(0.96);
-    transition:opacity .6s ease, transform .6s ease;
-    pointer-events:none;
-    visibility:hidden;
+  position:absolute;
+  inset:0;
+  width:100%;
+  height:100%;
+
+  opacity:0;
+  transform:scale(.98);
+  transition:
+    opacity .65s cubic-bezier(.4,0,.2,1),
+    transform .65s cubic-bezier(.4,0,.2,1);
+
+  pointer-events:none;
+  z-index:0;
+
+  /* giúp browser render mượt hơn */
+  will-change: opacity, transform;
 }
 
-.page.show{
-    opacity:1;
-    transform:scale(1);
-    pointer-events:auto;
-    visibility:visible;
-    z-index:1;
+.page.is-active{
+  opacity:1;
+  transform:scale(1);
+  pointer-events:auto;
+  z-index:3;
+}
+
+.page.is-leaving{
+  opacity:0;
+  transform:scale(.99);
+  pointer-events:none;
+  z-index:2;
+}
+
+/* ✅ GIỮ LAYOUT LUÔN (tránh nhảy layout khi active) */
+#loginPage{
+  display:flex;
+  justify-content:center;
+  align-items:center;
+}
+#homePage{
+  display:flex;
+  flex-direction:column;
 }
 
 /* =======================================================
    ✅ LOGIN BACKGROUND ANIMATION (Gradient + Particles)
    ======================================================= */
 #loginPage{
-    display:flex;
-    justify-content:center;
-    align-items:center;
-    position:relative;
-    overflow:hidden;
+  position:relative;
+  overflow:hidden;
 }
 
 /* canvas particles */
 #loginFx{
-    position:absolute;
-    inset:0;
-    width:100%;
-    height:100%;
-    z-index:0;
+  position:absolute;
+  inset:0;
+  width:100%;
+  height:100%;
+  z-index:0;
 }
 
 /* layer gradient animated */
 #loginPage::before{
-    content:"";
-    position:absolute;
-    inset:-40%;
-    background:
-      radial-gradient(circle at 20% 20%, rgba(110,80,255,.35), transparent 55%),
-      radial-gradient(circle at 80% 30%, rgba(0,200,255,.28), transparent 55%),
-      radial-gradient(circle at 40% 90%, rgba(255,0,200,.22), transparent 60%),
-      radial-gradient(circle at 70% 80%, rgba(0,255,140,.18), transparent 60%),
-      linear-gradient(120deg, #070c18, #0b1533, #070c18);
-    filter:saturate(1.15);
-    animation:loginGlow 10s ease-in-out infinite alternate;
-    z-index:0;
+  content:"";
+  position:absolute;
+  inset:-40%;
+  background:
+    radial-gradient(circle at 20% 20%, rgba(110,80,255,.35), transparent 55%),
+    radial-gradient(circle at 80% 30%, rgba(0,200,255,.28), transparent 55%),
+    radial-gradient(circle at 40% 90%, rgba(255,0,200,.22), transparent 60%),
+    radial-gradient(circle at 70% 80%, rgba(0,255,140,.18), transparent 60%),
+    linear-gradient(120deg, #070c18, #0b1533, #070c18);
+  filter:saturate(1.15);
+  animation:loginGlow 10s ease-in-out infinite alternate;
+  z-index:0;
 }
 
-/* optional background image blend (giữ ảnh của bạn nhưng làm mịn) */
+/* optional background image blend */
 #loginPage::after{
-    content:"";
-    position:absolute;
-    inset:0;
-    background:url("25003.jpg") center/cover no-repeat;
-    opacity:.28;            /* giảm để không che hiệu ứng */
-    filter:blur(0px) contrast(1.05) saturate(1.05);
-    z-index:0;
+  content:"";
+  position:absolute;
+  inset:0;
+  background:url("25003.jpg") center/cover no-repeat;
+  opacity:.28;
+  filter:blur(0px) contrast(1.05) saturate(1.05);
+  z-index:0;
 }
 
 @keyframes loginGlow{
@@ -97,325 +127,402 @@ body{
   100%{transform:translate3d(0%, 2%, 0) rotate(-4deg) scale(1.03)}
 }
 
-/* thêm chút vignette cho sang */
+/* vignette */
 .login-vignette{
-    position:absolute;
-    inset:0;
-    background:radial-gradient(circle at center, transparent 45%, rgba(0,0,0,.55) 100%);
-    z-index:1;
-    pointer-events:none;
+  position:absolute;
+  inset:0;
+  background:radial-gradient(circle at center, transparent 45%, rgba(0,0,0,.55) 100%);
+  z-index:1;
+  pointer-events:none;
 }
 
 /* ===== LOGIN SOCIAL ===== */
 .login-social{
-    position:absolute;
-    top:20px;
-    right:20px;
-    display:flex;
-    gap:12px;
-    z-index:3;
+  position:absolute;
+  top:20px;
+  right:20px;
+  display:flex;
+  gap:12px;
+  z-index:3;
 }
 .login-social a{
-    width:42px;
-    height:42px;
-    background:rgba(255,255,255,.15);
-    border-radius:12px;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    color:white;
-    text-decoration:none;
-    font-size:20px;
-    backdrop-filter: blur(10px);
-    border:1px solid rgba(255,255,255,.15);
+  width:42px;
+  height:42px;
+  background:rgba(255,255,255,.15);
+  border-radius:12px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  color:white;
+  text-decoration:none;
+  font-size:20px;
+  backdrop-filter: blur(10px);
+  border:1px solid rgba(255,255,255,.15);
 }
 
-/* ===== LOGIN BOX (đẹp hơn 1 chút) ===== */
+/* ===== LOGIN BOX ===== */
 .login-box{
-    width:360px;
-    padding:30px;
-    border-radius:22px;
-    background:rgba(255,255,255,.14);
-    border:1px solid rgba(255,255,255,.18);
-    backdrop-filter:blur(14px);
-    box-shadow:0 18px 45px rgba(0,0,0,.35);
-    z-index:2;
+  width:360px;
+  padding:30px;
+  border-radius:22px;
+  background:rgba(255,255,255,.14);
+  border:1px solid rgba(255,255,255,.18);
+  backdrop-filter:blur(14px);
+  box-shadow:0 18px 45px rgba(0,0,0,.35);
+  z-index:2;
 }
-
 .lang{text-align:right;margin-bottom:10px;cursor:pointer}
 
 .login-box input{
-    width:100%;
-    padding:12px;
-    margin-top:10px;
-    border-radius:12px;
-    border:none;
-    outline:none;
-    background:rgba(10,15,35,.55);
-    color:#fff;
-    border:1px solid rgba(255,255,255,.12);
+  width:100%;
+  padding:12px;
+  margin-top:10px;
+  border-radius:12px;
+  border:none;
+  outline:none;
+  background:rgba(10,15,35,.55);
+  color:#fff;
+  border:1px solid rgba(255,255,255,.12);
 }
 .login-box input::placeholder{color:rgba(255,255,255,.65)}
 
 .login-box button{
-    width:100%;
-    padding:12px;
-    margin-top:15px;
-    border:none;
-    border-radius:12px;
-    background:#6a5cff;
-    color:white;
-    cursor:pointer;
-    transition:.2s;
+  width:100%;
+  padding:12px;
+  margin-top:15px;
+  border:none;
+  border-radius:12px;
+  background:#6a5cff;
+  color:white;
+  cursor:pointer;
+  transition:.2s;
 }
 .login-box button:hover{filter:brightness(1.08)}
-
 .toggle{text-align:center;margin-top:12px;cursor:pointer}
 
-/* ===== HOME ===== */
+/* =======================================================
+   ✅ HOME BACKGROUND (Aurora + Stars + Noise + Vignette)
+   ======================================================= */
 #homePage{
-    display:flex;
-    flex-direction:column;
+  position:relative;
+  overflow:hidden;
+  background:
+    radial-gradient(circle at 18% 18%, rgba(0,200,255,.12), transparent 58%),
+    radial-gradient(circle at 82% 24%, rgba(122,92,255,.12), transparent 58%),
+    radial-gradient(circle at 70% 85%, rgba(255,0,212,.08), transparent 62%),
+    radial-gradient(circle at 28% 80%, rgba(0,255,133,.07), transparent 62%),
+    linear-gradient(120deg,#050814,#070c18,#0b1533,#060a14);
 }
 
+/* stars */
+#homePage::before{
+  content:"";
+  position:absolute;
+  inset:0;
+  background:
+    radial-gradient(1px 1px at 10% 20%, rgba(255,255,255,.32) 50%, transparent 52%),
+    radial-gradient(1px 1px at 35% 70%, rgba(255,255,255,.22) 50%, transparent 52%),
+    radial-gradient(1px 1px at 80% 30%, rgba(255,255,255,.30) 50%, transparent 52%),
+    radial-gradient(1px 1px at 60% 90%, rgba(255,255,255,.18) 50%, transparent 52%),
+    radial-gradient(1px 1px at 92% 60%, rgba(255,255,255,.18) 50%, transparent 52%),
+    radial-gradient(1px 1px at 12% 58%, rgba(255,255,255,.14) 50%, transparent 52%),
+    radial-gradient(1px 1px at 28% 36%, rgba(255,255,255,.12) 50%, transparent 52%),
+    radial-gradient(1px 1px at 47% 18%, rgba(255,255,255,.12) 50%, transparent 52%),
+    radial-gradient(1px 1px at 73% 44%, rgba(255,255,255,.12) 50%, transparent 52%),
+    radial-gradient(1px 1px at 88% 12%, rgba(255,255,255,.12) 50%, transparent 52%),
+    radial-gradient(1px 1px at 15% 85%, rgba(255,255,255,.10) 50%, transparent 52%),
+    radial-gradient(1px 1px at 55% 55%, rgba(255,255,255,.10) 50%, transparent 52%);
+  opacity:.45;
+  filter: blur(.2px);
+  animation: starDrift 28s linear infinite;
+  z-index:0;
+  pointer-events:none;
+}
+@keyframes starDrift{
+  0%{ transform: translate3d(0,0,0) scale(1); }
+  50%{ transform: translate3d(-14px,10px,0) scale(1.02); }
+  100%{ transform: translate3d(0,0,0) scale(1); }
+}
+
+/* aurora */
+.home-aurora{
+  position:absolute;
+  inset:-20%;
+  z-index:0;
+  filter: blur(34px) saturate(125%);
+  opacity:.90;
+  pointer-events:none;
+}
+.home-aurora .blob{
+  position:absolute;
+  width:540px; height:540px;
+  border-radius: 45% 55% 55% 45% / 45% 45% 55% 55%;
+  mix-blend-mode: screen;
+  opacity:.62;
+  animation: blobFloat 18s ease-in-out infinite;
+}
+.home-aurora .b1{ left:10%; top:10%;
+  background:
+    radial-gradient(circle at 30% 30%, rgba(0,200,255,.85), transparent 60%),
+    radial-gradient(circle at 70% 70%, rgba(0,255,160,.55), transparent 62%);
+  animation-duration: 18s;
+}
+.home-aurora .b2{ left:58%; top:6%;
+  background:
+    radial-gradient(circle at 35% 35%, rgba(150,110,255,.80), transparent 60%),
+    radial-gradient(circle at 70% 65%, rgba(255,0,200,.48), transparent 62%);
+  animation-duration: 20s;
+  animation-delay: -4s;
+}
+.home-aurora .b3{ left:48%; top:55%; width:640px; height:640px;
+  background:
+    radial-gradient(circle at 30% 30%, rgba(255,140,0,.20), transparent 62%),
+    radial-gradient(circle at 70% 70%, rgba(255,0,120,.55), transparent 60%);
+  animation-duration: 22s;
+  animation-delay: -7s;
+}
+.home-aurora .b4{ left:6%; top:58%; width:580px; height:580px;
+  background:
+    radial-gradient(circle at 35% 35%, rgba(0,255,140,.55), transparent 60%),
+    radial-gradient(circle at 70% 70%, rgba(0,200,255,.25), transparent 62%);
+  animation-duration: 19s;
+  animation-delay: -10s;
+}
+@keyframes blobFloat{
+  0%   { transform: translate3d(0,0,0) rotate(0deg) scale(1); }
+  25%  { transform: translate3d(60px,-20px,0) rotate(18deg) scale(1.05); }
+  50%  { transform: translate3d(40px,40px,0) rotate(0deg) scale(0.98); }
+  75%  { transform: translate3d(-30px,25px,0) rotate(-16deg) scale(1.04); }
+  100% { transform: translate3d(0,0,0) rotate(0deg) scale(1); }
+}
+
+/* noise */
+.home-noise{
+  position:absolute; inset:0;
+  z-index:1;
+  pointer-events:none;
+  opacity:.10;
+  background-image:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='240' height='240' filter='url(%23n)' opacity='.45'/%3E%3C/svg%3E");
+  mix-blend-mode: overlay;
+  animation: noiseMove 8s steps(6) infinite;
+}
+@keyframes noiseMove{
+  0%{ transform: translate3d(0,0,0); }
+  20%{ transform: translate3d(-2%,1%,0); }
+  40%{ transform: translate3d(3%,-1%,0); }
+  60%{ transform: translate3d(-1%,-2%,0); }
+  80%{ transform: translate3d(2%,2%,0); }
+  100%{ transform: translate3d(0,0,0); }
+}
+.home-vignette{
+  position:absolute; inset:0;
+  z-index:1;
+  pointer-events:none;
+  background: radial-gradient(circle at 50% 30%, transparent 40%, rgba(0,0,0,.45) 100%);
+}
+@media (prefers-reduced-motion: reduce){
+  #homePage::before, .home-aurora .blob, .home-noise{ animation:none !important; }
+}
+
+/* ===== HOME UI ===== */
 .header{
-    padding:20px 30px;
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    border-bottom:1px solid rgba(255,255,255,.1);
+  padding:20px 30px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  border-bottom:1px solid rgba(255,255,255,.1);
+  position:relative;
+  z-index:3;
 }
-
 .logo{font-size:26px;color:#4c8cff}
+.header-right{display:flex;gap:12px;align-items:center;}
+.logout{background:#ff4c4c;border:none;padding:10px 16px;border-radius:10px;color:white;cursor:pointer;}
 
-.header-right{
-    display:flex;
-    gap:12px;
-    align-items:center;
-}
-
-.logout{
-    background:#ff4c4c;
-    border:none;
-    padding:10px 16px;
-    border-radius:10px;
-    color:white;
-    cursor:pointer;
-}
-
-.search{padding:25px 30px}
+.search{padding:25px 30px; position:relative; z-index:3;}
 .search input{
-    width:100%;
-    padding:15px;
-    border-radius:16px;
-    border:none;
+  width:100%;
+  padding:15px;
+  border-radius:16px;
+  border:none;
+  background: rgba(255,255,255,.10);
+  color:#fff;
+  outline:none;
+  backdrop-filter: blur(10px);
 }
 
 .grid{
-    padding:20px 30px;
-    display:grid;
-    grid-template-columns:repeat(auto-fill,minmax(260px,1fr));
-    gap:20px;
+  padding:20px 30px;
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(260px,1fr));
+  gap:20px;
+  position:relative; z-index:3;
 }
 
 .card{
-    background:#141c2f;
-    padding:20px;
-    border-radius:20px;
+  background:rgba(20,28,47,.72);
+  padding:20px;
+  border-radius:20px;
+  backdrop-filter: blur(12px);
+  border:1px solid rgba(255,255,255,.10);
+  box-shadow: 0 18px 45px rgba(0,0,0,.35);
 }
-.card img{
-    width:54px;
-    height:54px;
-    border-radius:14px;
-}
-.tag{
-    background:#4c8cff;
-    padding:5px 12px;
-    border-radius:10px;
-    font-size:12px;
-}
-.links a{
-    display:block;
-    margin-top:8px;
-    color:#4c8cff;
-    cursor:pointer;
-}
+.card img{width:54px;height:54px;border-radius:14px;}
+.tag{background:#4c8cff;padding:5px 12px;border-radius:10px;font-size:12px;}
+.links a{display:block;margin-top:8px;color:#4c8cff;cursor:pointer;}
 
-/* ===== SOCIAL (HOME) ===== */
+/* social */
 .social{
-    position:fixed;
-    bottom:8px;
-    right:8px;
-    display:flex;
-    gap:12px;
-    z-index:5;
+  position:fixed;bottom:8px;right:8px;display:flex;gap:12px;z-index:5;
 }
 .social a{
-    width:46px;
-    height:46px;
-    background:#141c2f;
-    border-radius:14px;
-    display:flex;
-    justify-content:center;
-    align-items:center;
+  width:46px;height:46px;background:#141c2f;border-radius:14px;
+  display:flex;justify-content:center;align-items:center;
 }
 .social img{width:26px}
 
-/* =======================================================
-   ✅ NEON MENU (Modules + Script, LED RGB)
-   ======================================================= */
+/* neon menu */
 .neon-menu{
-    position:fixed;
-    top:18px;
-    left:50%;
-    transform:translateX(-50%);
-    display:flex;
-    gap:28px;
-    padding:10px 28px;
-    border-radius:999px;
-    background:rgba(10,15,35,.85);
-    backdrop-filter:blur(12px);
-    z-index:10;
-    isolation:isolate;
+  position:fixed;top:18px;left:50%;transform:translateX(-50%);
+  display:flex;gap:28px;padding:10px 28px;border-radius:999px;
+  background:rgba(10,15,35,.85);backdrop-filter:blur(12px);
+  z-index:10;isolation:isolate;
 }
 .neon-menu::before{
-    content:"";
-    position:absolute;
-    inset:-2px;
-    border-radius:inherit;
-    background:linear-gradient(
-        90deg,
-        #ff004c,#ff9f00,#ffee00,#00ff85,#00c8ff,#7a5cff,#ff00d4,#ff004c
-    );
-    background-size:400% 400%;
-    animation:rgb 6s linear infinite;
-    filter:blur(4px);
-    z-index:-1;
-    opacity:.95;
+  content:"";position:absolute;inset:-2px;border-radius:inherit;
+  background:linear-gradient(90deg,#ff004c,#ff9f00,#ffee00,#00ff85,#00c8ff,#7a5cff,#ff00d4,#ff004c);
+  background-size:400% 400%;
+  animation:rgb 6s linear infinite;
+  filter:blur(4px);
+  z-index:-1;opacity:.95;
 }
 .neon-menu::after{
-    content:"";
-    position:absolute;
-    inset:1px;
-    border-radius:inherit;
-    background:#0b1230;
-    z-index:-1;
+  content:"";position:absolute;inset:1px;border-radius:inherit;
+  background:#0b1230;z-index:-1;
 }
 .neon-menu a{
-    color:#9ecbff;
-    text-decoration:none;
-    font-size:16px;
-    font-weight:500;
-    position:relative;
-    padding:6px 2px;
-    cursor:pointer;
-    transition:.25s;
+  color:#9ecbff;text-decoration:none;font-size:16px;font-weight:500;
+  position:relative;padding:6px 2px;cursor:pointer;transition:.25s;
 }
 .neon-menu a::after{
-    content:"";
-    position:absolute;
-    left:0;
-    bottom:-6px;
-    width:0;
-    height:2px;
-    background:linear-gradient(90deg,#00c8ff,#7a5cff,#ff00d4);
-    border-radius:10px;
-    transition:.25s;
+  content:"";position:absolute;left:0;bottom:-6px;width:0;height:2px;
+  background:linear-gradient(90deg,#00c8ff,#7a5cff,#ff00d4);
+  border-radius:10px;transition:.25s;
 }
 .neon-menu a:hover,
-.neon-menu a.active{
-    color:#fff;
-    text-shadow:0 0 8px rgba(120,180,255,.9);
-}
+.neon-menu a.active{color:#fff;text-shadow:0 0 8px rgba(120,180,255,.9);}
 .neon-menu a:hover::after,
 .neon-menu a.active::after{width:100%}
 @keyframes rgb{
-    0%{background-position:0% 50%}
-    50%{background-position:100% 50%}
-    100%{background-position:0% 50%}
+  0%{background-position:0% 50%}
+  50%{background-position:100% 50%}
+  100%{background-position:0% 50%}
 }
 
-/* ===== SECTION ===== */
-.section{padding:20px 30px}
+.section{padding:20px 30px; position:relative; z-index:3;}
 </style>
 </head>
 
 <body>
 
 <!-- ===== LOGIN ===== -->
-<div id="loginPage" class="page show">
-    <!-- ✅ Animated particles -->
-    <canvas id="loginFx"></canvas>
-    <div class="login-vignette"></div>
+<div id="loginPage" class="page is-active">
+  <canvas id="loginFx"></canvas>
+  <div class="login-vignette"></div>
 
-    <div class="login-social">
-        <a href="https://www.facebook.com/profile.php?id=61556788532608" target="_blank">f</a>
-        <a href="https://www.tiktok.com/@hoangducdanh1" target="_blank">♪</a>
-    </div>
+  <div class="login-social">
+    <a href="https://www.facebook.com/profile.php?id=61556788532608" target="_blank">f</a>
+    <a href="https://www.tiktok.com/@hoangducdanh1" target="_blank">♪</a>
+  </div>
 
-    <div class="login-box">
-        <div class="lang" onclick="switchLang()">🌐 <span id="langText">VI</span></div>
-        <h2 id="title"></h2>
-        <p id="desc"></p>
-        <input id="email" placeholder="Email">
-        <input id="password" type="password" placeholder="Password">
-        <button onclick="submitForm()" id="btn"></button>
-        <div class="toggle" onclick="toggleForm()" id="toggle"></div>
-    </div>
+  <div class="login-box">
+    <div class="lang" onclick="switchLang()">🌐 <span id="langText">VI</span></div>
+    <h2 id="title"></h2>
+    <p id="desc"></p>
+    <input id="email" placeholder="Email">
+    <input id="password" type="password" placeholder="Password">
+    <button onclick="submitForm()" id="btn"></button>
+    <div class="toggle" onclick="toggleForm()" id="toggle"></div>
+  </div>
 </div>
 
 <!-- ===== HOME ===== -->
 <div id="homePage" class="page">
 
-    <div class="neon-menu">
-        <a class="active">Modules</a>
-        <a>Script</a>
-    </div>
+  <div class="home-aurora" aria-hidden="true">
+    <div class="blob b1"></div>
+    <div class="blob b2"></div>
+    <div class="blob b3"></div>
+    <div class="blob b4"></div>
+  </div>
+  <div class="home-noise" aria-hidden="true"></div>
+  <div class="home-vignette" aria-hidden="true"></div>
 
-    <div class="header">
-        <div class="logo" id="homeTitle"></div>
-        <div class="header-right">
-            <div class="lang" onclick="switchLang()">🌐 <span id="langText2">VI</span></div>
-            <button class="logout" onclick="logout()" id="logoutBtn"></button>
-        </div>
-    </div>
+  <div class="neon-menu">
+    <a class="active" data-tab="modules">Modules</a>
+    <a data-tab="script">Script</a>
+  </div>
 
-    <div class="search">
-        <input id="searchInput">
+  <div class="header">
+    <div class="logo" id="homeTitle"></div>
+    <div class="header-right">
+      <div class="lang" onclick="switchLang()">🌐 <span id="langText2">VI</span></div>
+      <button class="logout" onclick="logout()" id="logoutBtn"></button>
     </div>
+  </div>
 
-    <div class="grid">
-        <div class="card">
-            <img src="locket.png">
-            <h3>Locket Gold</h3>
-            <span class="tag">python</span>
-            <div class="links">
-                <a href="https://raw.githubusercontent.com/NightmarketServer/Locket/refs/heads/main/Locketgold-V10.module" target="_blank">📦 Modules</a>
-                <a onclick="copyModule()" id="copyBtn"></a>
-                <a href="locketgold.mobileconfig" target="_blank" id="dnsBtn"></a>
-            </div>
-        </div>
-    </div>
+  <div class="search">
+    <input id="searchInput">
+  </div>
 
-    <div id="scriptSection" class="section" hidden>
-        <h2>Script</h2>
-        <p>Chỗ này bạn dán script/ghi chú/script download tùy bạn.</p>
+  <div class="grid">
+    <div class="card">
+      <img src="locket.png">
+      <h3>Locket Gold</h3>
+      <span class="tag">python</span>
+      <div class="links">
+        <a href="https://raw.githubusercontent.com/NightmarketServer/Locket/refs/heads/main/Locketgold-V10.module" target="_blank">📦 Modules</a>
+        <a onclick="copyModule()" id="copyBtn"></a>
+        <a href="locketgold.mobileconfig" target="_blank" id="dnsBtn"></a>
+      </div>
     </div>
+  </div>
 
-    <div class="social">
-        <a href="https://www.facebook.com/profile.php?id=61556788532608" target="_blank">
-            <img src="fb.png">
-        </a>
-        <a href="https://www.tiktok.com/@hoangducdanh1" target="_blank">
-            <img src="tiktok.png">
-        </a>
-    </div>
+  <div id="scriptSection" class="section" hidden>
+    <h2>Script</h2>
+    <p>Chỗ này bạn dán script/ghi chú/script download tùy bạn.</p>
+  </div>
+
+  <div class="social">
+    <a href="https://www.facebook.com/profile.php?id=61556788532608" target="_blank"><img src="fb.png"></a>
+    <a href="https://www.tiktok.com/@hoangducdanh1" target="_blank"><img src="tiktok.png"></a>
+  </div>
 </div>
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-app.js";
 import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-auth.js";
 
+/* ✅ DOM refs */
+const loginPage   = document.getElementById("loginPage");
+const homePage    = document.getElementById("homePage");
+const title       = document.getElementById("title");
+const desc        = document.getElementById("desc");
+const btn         = document.getElementById("btn");
+const toggle      = document.getElementById("toggle");
+const email       = document.getElementById("email");
+const password    = document.getElementById("password");
+const homeTitle   = document.getElementById("homeTitle");
+const logoutBtn   = document.getElementById("logoutBtn");
+const searchInput = document.getElementById("searchInput");
+const copyBtn     = document.getElementById("copyBtn");
+const dnsBtn      = document.getElementById("dnsBtn");
+const langText    = document.getElementById("langText");
+const langText2   = document.getElementById("langText2");
+const grid        = document.querySelector("#homePage .grid");
+const scriptSection = document.getElementById("scriptSection");
+
+/* ✅ Firebase config */
 const firebaseConfig = {
   apiKey: "AIzaSyBvKKkHFHocNxQlw0TBBOEEyD57kpfQQT8",
   authDomain: "hoangducdanh-cd721.firebaseapp.com",
@@ -424,130 +531,191 @@ const firebaseConfig = {
   messagingSenderId: "167023468536",
   appId: "1:167023468536:web:386c2e16b4e611a1fac00d"
 };
-
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
+
+/* ✅ bật transition sau frame đầu */
+requestAnimationFrame(() => document.body.classList.add("is-ready"));
+
+/* =======================================================
+   ✅ TRANSITION FIX CHẮC: KHÔNG TRỐNG MÀN
+   - Bật toEl active TRƯỚC
+   - Rồi mới cho fromEl leaving
+   - Không dùng visibility -> luôn có 1 page đang paint
+   ======================================================= */
+let current = loginPage;
+let isAnimating = false;
+
+function setPage(nextEl, animate=true){
+  if(nextEl === current) return;
+
+  // bật trang đích ngay lập tức
+  nextEl.classList.add("is-active");
+  nextEl.classList.remove("is-leaving");
+
+  if(!animate || !document.body.classList.contains("is-ready")){
+    // không animate (lúc load đầu)
+    current.classList.remove("is-active","is-leaving");
+    current = nextEl;
+    return;
+  }
+
+  if(isAnimating) return;
+  isAnimating = true;
+
+  // cho trang hiện tại rời đi
+  current.classList.add("is-leaving");
+  current.classList.remove("is-active");
+
+  const fromEl = current;
+
+  const done = () => {
+    fromEl.classList.remove("is-leaving");
+    current = nextEl;
+    isAnimating = false;
+  };
+
+  // nghe transition của opacity trên fromEl
+  const onEnd = (e) => {
+    if(e.propertyName !== "opacity") return;
+    fromEl.removeEventListener("transitionend", onEnd);
+    done();
+  };
+  fromEl.addEventListener("transitionend", onEnd);
+
+  // fallback chống kẹt
+  setTimeout(() => {
+    fromEl.removeEventListener("transitionend", onEnd);
+    if(isAnimating) done();
+  }, 900);
+}
+
+function showHome(){ setPage(homePage, true); }
+function showLogin(){ setPage(loginPage, true); }
 
 /* ===== LANGUAGE ===== */
 let isLogin = true;
 let isVI = localStorage.getItem("lang") !== "en";
 
 const text = {
-vi:{
- titleLogin:"Chào mừng trở lại",
- descLogin:"Đăng nhập để tiếp tục",
- titleRegister:"Đăng ký",
- descRegister:"Tạo tài khoản mới",
- login:"Đăng nhập",
- register:"Đăng ký",
- toggleToRegister:"Chưa có tài khoản? Đăng ký",
- toggleToLogin:"Đã có tài khoản? Đăng nhập",
- home:"Thư Viện Của Danh",
- logout:"Đăng xuất",
- search:"🔍 Tìm kiếm code của bạn...",
- copy:"📋 Sao chép",
- dns:"⬇️ Tải DNS",
- menuModules:"Modules",
- menuScript:"Script"
-},
-en:{
- titleLogin:"Welcome Back",
- descLogin:"Login to continue",
- titleRegister:"Register",
- descRegister:"Create new account",
- login:"Login",
- register:"Register",
- toggleToRegister:"No account? Sign up",
- toggleToLogin:"Have account? Login",
- home:"Danh Library",
- logout:"Logout",
- search:"🔍 Search your code...",
- copy:"📋 Copy",
- dns:"⬇️ Download DNS",
- menuModules:"Modules",
- menuScript:"Script"
-}
+  vi:{
+    titleLogin:"Chào mừng trở lại",
+    descLogin:"Đăng nhập để tiếp tục",
+    titleRegister:"Đăng ký",
+    descRegister:"Tạo tài khoản mới",
+    login:"Đăng nhập",
+    register:"Đăng ký",
+    toggleToRegister:"Chưa có tài khoản? Đăng ký",
+    toggleToLogin:"Đã có tài khoản? Đăng nhập",
+    home:"Thư Viện Của Danh",
+    logout:"Đăng xuất",
+    search:"🔍 Tìm kiếm code của bạn...",
+    copy:"📋 Sao chép",
+    dns:"⬇️ Tải DNS",
+    menuModules:"Modules",
+    menuScript:"Script"
+  },
+  en:{
+    titleLogin:"Welcome Back",
+    descLogin:"Login to continue",
+    titleRegister:"Register",
+    descRegister:"Create new account",
+    login:"Login",
+    register:"Register",
+    toggleToRegister:"No account? Sign up",
+    toggleToLogin:"Have account? Login",
+    home:"Danh Library",
+    logout:"Logout",
+    search:"🔍 Search your code...",
+    copy:"📋 Copy",
+    dns:"⬇️ Download DNS",
+    menuModules:"Modules",
+    menuScript:"Script"
+  }
 };
 
 function updateText(){
- const t = isVI ? text.vi : text.en;
- title.innerText = isLogin ? t.titleLogin : t.titleRegister;
- desc.innerText  = isLogin ? t.descLogin  : t.descRegister;
- btn.innerText   = isLogin ? t.login : t.register;
- toggle.innerText= isLogin ? t.toggleToRegister : t.toggleToLogin;
+  const t = isVI ? text.vi : text.en;
 
- homeTitle.innerText = "📚 " + t.home;
- logoutBtn.innerText = t.logout;
- searchInput.placeholder = t.search;
- copyBtn.innerText = t.copy;
- dnsBtn.innerText = t.dns;
+  title.innerText  = isLogin ? t.titleLogin : t.titleRegister;
+  desc.innerText   = isLogin ? t.descLogin  : t.descRegister;
+  btn.innerText    = isLogin ? t.login : t.register;
+  toggle.innerText = isLogin ? t.toggleToRegister : t.toggleToLogin;
 
- langText.innerText = isVI ? "VI" : "EN";
- langText2.innerText = isVI ? "VI" : "EN";
+  homeTitle.innerText = "📚 " + t.home;
+  logoutBtn.innerText = t.logout;
+  searchInput.placeholder = t.search;
+  copyBtn.innerText = t.copy;
+  dnsBtn.innerText  = t.dns;
 
- const menuLinks = document.querySelectorAll(".neon-menu a");
- if(menuLinks[0]) menuLinks[0].innerText = t.menuModules;
- if(menuLinks[1]) menuLinks[1].innerText = t.menuScript;
+  langText.innerText  = isVI ? "VI" : "EN";
+  langText2.innerText = isVI ? "VI" : "EN";
+
+  const menuLinks = document.querySelectorAll("#homePage .neon-menu a");
+  if(menuLinks[0]) menuLinks[0].innerText = t.menuModules;
+  if(menuLinks[1]) menuLinks[1].innerText = t.menuScript;
 }
 
-window.toggleForm = ()=>{isLogin=!isLogin;updateText();}
+window.toggleForm = ()=>{ isLogin=!isLogin; updateText(); };
 window.switchLang = ()=>{
- isVI=!isVI;
- localStorage.setItem("lang",isVI?"vi":"en");
- updateText();
-}
+  isVI=!isVI;
+  localStorage.setItem("lang", isVI ? "vi" : "en");
+  updateText();
+};
 
 /* ===== AUTH ===== */
 window.submitForm = ()=>{
- const e=email.value.trim();
- const p=password.value.trim();
- if(!e||!p) return alert("Nhập đầy đủ!");
+  const e = email.value.trim();
+  const p = password.value.trim();
+  if(!e || !p) return alert("Nhập đầy đủ!");
 
- isLogin
- ? signInWithEmailAndPassword(auth,e,p).catch(err=>alert(err.message))
- : createUserWithEmailAndPassword(auth,e,p).then(()=>alert("Đăng ký thành công!")).catch(err=>alert(err.message));
-}
-
-function showHome(){
- loginPage.classList.remove("show");
- setTimeout(()=>homePage.classList.add("show"),150);
-}
+  if(isLogin){
+    signInWithEmailAndPassword(auth, e, p).catch(err=>alert(err.message));
+  }else{
+    createUserWithEmailAndPassword(auth, e, p)
+      .then(()=>alert("Đăng ký thành công!"))
+      .catch(err=>alert(err.message));
+  }
+};
 
 window.logout = ()=>{
- signOut(auth).then(()=>{
-   homePage.classList.remove("show");
-   setTimeout(()=>loginPage.classList.add("show"),150);
- });
-}
+  signOut(auth).then(()=> showLogin());
+};
 
 window.copyModule = ()=>{
- navigator.clipboard.writeText("https://raw.githubusercontent.com/NightmarketServer/Locket/refs/heads/main/Locketgold-V10.module");
- alert("Copied!");
-}
+  navigator.clipboard.writeText("https://raw.githubusercontent.com/NightmarketServer/Locket/refs/heads/main/Locketgold-V10.module");
+  alert("Copied!");
+};
 
-onAuthStateChanged(auth,user=>{
- user ? showHome() : (homePage.classList.remove("show"),loginPage.classList.add("show"));
+/* ✅ tránh spam chuyển page khi auth state bắn nhiều lần */
+let lastState = null;
+onAuthStateChanged(auth, user=>{
+  const next = user ? "home" : "login";
+  if(next === lastState) return;
+  lastState = next;
+
+  // lần đầu load: không animate để khỏi nháy
+  const first = !document.body.classList.contains("is-ready");
+  if(user) setPage(homePage, !first);
+  else setPage(loginPage, !first);
 });
 
-/* ===== MENU CLICK (Modules / Script) ===== */
-const menuLinks = document.querySelectorAll(".neon-menu a");
-const grid = document.querySelector(".grid");
-const scriptSection = document.getElementById("scriptSection");
-
+/* ===== MENU CLICK ===== */
+const menuLinks = document.querySelectorAll("#homePage .neon-menu a");
 menuLinks.forEach(link=>{
- link.onclick=()=>{
-  menuLinks.forEach(l=>l.classList.remove("active"));
-  link.classList.add("active");
+  link.onclick = ()=>{
+    menuLinks.forEach(l=>l.classList.remove("active"));
+    link.classList.add("active");
 
-  scriptSection.hidden = true;
-
-  if(link.innerText === "Modules"){
-    grid.style.display="grid";
-  }else{
-    grid.style.display="none";
-    scriptSection.hidden=false;
-  }
- };
+    const tab = link.getAttribute("data-tab");
+    if(tab === "modules"){
+      grid.style.display="grid";
+      scriptSection.hidden = true;
+    }else{
+      grid.style.display="none";
+      scriptSection.hidden = false;
+    }
+  };
 });
 
 updateText();
@@ -574,8 +742,8 @@ window.addEventListener("resize", resize);
 function rand(a,b){ return a + Math.random()*(b-a); }
 
 function makeParticles(){
-  const count = Math.floor((W*H)/45000); // tự scale theo màn hình
-  particles = new Array(Math.max(50, Math.min(130, count))).fill(0).map(()=>({
+  const count = Math.floor((W*H)/45000);
+  particles = new Array(Math.max(50, Math.min(130, count))).fill(0).map(() => ({
     x: rand(0,W),
     y: rand(0,H),
     r: rand(0.8, 2.2),
@@ -588,8 +756,8 @@ function makeParticles(){
 function draw(){
   if(!running) return;
 
-  // chỉ chạy khi đang ở loginPage (đỡ tốn)
-  const onLogin = loginPage.classList.contains("show");
+  // chạy particles khi login đang hiển thị hoặc đang fade-out
+  const onLogin = loginPage.classList.contains("is-active") || loginPage.classList.contains("is-leaving");
   if(!onLogin){
     ctx.clearRect(0,0,W,H);
     requestAnimationFrame(draw);
@@ -598,14 +766,12 @@ function draw(){
 
   ctx.clearRect(0,0,W,H);
 
-  // glow mờ
   const g = ctx.createRadialGradient(W*0.5,H*0.2, 0, W*0.5,H*0.2, Math.max(W,H));
   g.addColorStop(0, "rgba(120,180,255,0.10)");
   g.addColorStop(1, "rgba(0,0,0,0)");
   ctx.fillStyle = g;
   ctx.fillRect(0,0,W,H);
 
-  // particles
   for(const p of particles){
     p.x += p.vx; p.y += p.vy;
 
@@ -620,7 +786,6 @@ function draw(){
     ctx.fill();
   }
 
-  // nối line nhẹ giữa hạt gần nhau
   for(let i=0;i<particles.length;i++){
     for(let j=i+1;j<particles.length;j++){
       const a = particles[i], b = particles[j];
@@ -646,14 +811,26 @@ resize();
 makeParticles();
 draw();
 
-// regenerate when entering login again
+/* ✅ Khi quay về login thì regen particles cho đúng size */
 const observer = new MutationObserver(()=>{
-  if(loginPage.classList.contains("show")){
+  if(loginPage.classList.contains("is-active")){
     resize();
     makeParticles();
   }
 });
 observer.observe(loginPage, { attributes:true, attributeFilter:["class"] });
+
+/* ✅ HOME PARALLAX */
+const aurora = document.querySelector(".home-aurora");
+if(aurora){
+  window.addEventListener("mousemove", (e) => {
+    const onHome = homePage.classList.contains("is-active") || homePage.classList.contains("is-leaving");
+    if(!onHome) return;
+    const x = (e.clientX / window.innerWidth - 0.5) * 18;
+    const y = (e.clientY / window.innerHeight - 0.5) * 14;
+    aurora.style.transform = `translate3d(${x}px, ${y}px, 0)`;
+  }, { passive:true });
+}
 </script>
 
 </body>
