@@ -356,16 +356,6 @@ body{
 .tag{background:#4c8cff;padding:5px 12px;border-radius:10px;font-size:12px;}
 .links a{display:block;margin-top:8px;color:#4c8cff;cursor:pointer;}
 
-/* social */
-.social{
-    position:fixed;bottom:8px;right:8px;display:flex;gap:12px;z-index:5;
-}
-.social a{
-    width:46px;height:46px;background:#141c2f;border-radius:14px;
-    display:flex;justify-content:center;align-items:center;
-}
-.social img{width:26px}
-
 /* neon menu */
 .neon-menu{
     position:fixed;top:18px;left:50%;transform:translateX(-50%);
@@ -405,6 +395,37 @@ body{
 }
 
 .section{padding:20px 30px; position:relative; z-index:3;}
+
+/* ✅ ADDED: SCROLL cho trang HOME (chỉ thêm, không sửa phần trên) */
+#homePage.show{
+    overflow-y:auto;
+    -webkit-overflow-scrolling:touch;
+}
+#homePage.show::-webkit-scrollbar{width:10px}
+#homePage.show::-webkit-scrollbar-thumb{
+    background:rgba(255,255,255,.18);
+    border-radius:999px;
+    border:2px solid rgba(0,0,0,.15);
+}
+#homePage.show::-webkit-scrollbar-track{background:rgba(0,0,0,.10)}
+/* ✅ ADDED END */
+
+/* ✅ FIX: SOCIAL ICON luôn cố định góc dưới (đặt NGOÀI .page để không bị transform) */
+.social-global{
+    position:fixed;
+    bottom:8px;
+    right:8px;
+    display:none;
+    gap:12px;
+    z-index:9999;
+}
+body.home-on .social-global{ display:flex; }
+.social-global a{
+    width:46px;height:46px;background:#141c2f;border-radius:14px;
+    display:flex;justify-content:center;align-items:center;
+}
+.social-global img{width:26px}
+/* ✅ FIX END */
 </style>
 </head>
 
@@ -471,18 +492,94 @@ body{
                 <a href="locketgold.mobileconfig" target="_blank" id="dnsBtn"></a>
             </div>
         </div>
+
+        <!-- ✅ ADDED: 3 card mới (KHÔNG có Tải DNS) -->
+        <div class="card">
+            <img src="wink.png">
+            <h3>Wink Prenium</h3>
+            <span class="tag">python</span>
+            <div class="links">
+                <a href="https://raw.githubusercontent.com/NightmarketServer/Shadowrocket-Module/refs/heads/main/Module/VIP%20Wink.module" target="_blank">📦 Modules</a>
+                <a onclick="copyModule2()" id="copyBtn2"></a>
+            </div>
+        </div>
+
+        <div class="card">
+            <img src="youtube.png">
+            <h3>Youtube Prenium</h3>
+            <span class="tag">python</span>
+            <div class="links">
+                <a href="https://raw.githubusercontent.com/NightmarketServer/Youtube-Premium/refs/heads/main/YouTubePremiumV3.5.module" target="_blank">📦 Modules</a>
+                <a onclick="copyModule3()" id="copyBtn3"></a>
+            </div>
+        </div>
+
+        <div class="card">
+            <img src="bilibili.png">
+            <h3>BiliBili No ADs</h3>
+            <span class="tag">python</span>
+            <div class="links">
+                <a href="https://raw.githubusercontent.com/NightmarketServer/Shadowrocket-Module/refs/heads/main/Module/Bilibili.module" target="_blank">📦 Modules</a>
+                <a onclick="copyModule4()" id="copyBtn4"></a>
+            </div>
+        </div>
+        <!-- ✅ ADDED END -->
+
+        <!-- ✅ ADDED: 4 card mới giống Wink Prenium (KHÔNG có Tải DNS) -->
+        <div class="card">
+            <img src="alightmotion.png">
+            <h3>Alight Motion Vip</h3>
+            <span class="tag">python</span>
+            <div class="links">
+                <a href="https://raw.githubusercontent.com/NightmarketServer/Shadowrocket-Module/refs/heads/main/Module/Alight%20Motion.module" target="_blank">📦 Modules</a>
+                <a onclick="copyModule5()" id="copyBtn5"></a>
+            </div>
+        </div>
+
+        <div class="card">
+            <img src="Picsart.png">
+            <h3>Picsart Premium</h3>
+            <span class="tag">python</span>
+            <div class="links">
+                <a href="https://raw.githubusercontent.com/NightmarketServer/Shadowrocket-Module/refs/heads/main/Module/Picsart%20Premium.module" target="_blank">📦 Modules</a>
+                <a onclick="copyModule6()" id="copyBtn6"></a>
+            </div>
+        </div>
+
+        <div class="card">
+            <img src="soundcloud.png">
+            <h3>soundcloud</h3>
+            <span class="tag">python</span>
+            <div class="links">
+                <a href="https://raw.githubusercontent.com/NightmarketServer/SoundCloudPlus/refs/heads/main/SoundcloudGo.module" target="_blank">📦 Modules</a>
+                <a onclick="copyModule7()" id="copyBtn7"></a>
+            </div>
+        </div>
+
+        <div class="card">
+            <img src="VSCO.png">
+            <h3>VSCO</h3>
+            <span class="tag">python</span>
+            <div class="links">
+                <a href="https://raw.githubusercontent.com/NightmarketServer/Shadowrocket-Module/refs/heads/main/Module/VSCO%20Premium.module" target="_blank">📦 Modules</a>
+                <a onclick="copyModule8()" id="copyBtn8"></a>
+            </div>
+        </div>
+        <!-- ✅ ADDED END -->
     </div>
 
     <div id="scriptSection" class="section" hidden>
         <h2>Script</h2>
         <p>Chỗ này bạn dán script/ghi chú/script download tùy bạn.</p>
     </div>
-
-    <div class="social">
-        <a href="https://www.facebook.com/profile.php?id=61556788532608" target="_blank"><img src="fb.png"></a>
-        <a href="https://www.tiktok.com/@hoangducdanh1" target="_blank"><img src="tiktok.png"></a>
-    </div>
 </div>
+
+<!-- ✅ FIX: social icons đặt NGOÀI homePage để luôn đứng yên khi scroll -->
+<div class="social-global">
+    <a href="https://www.facebook.com/profile.php?id=61556788532608" target="_blank"><img src="fb.png"></a>
+    <a href="https://www.tiktok.com/@hoangducdanh1" target="_blank"><img src="tiktok.png"></a>
+</div>
+<!-- ✅ FIX END -->
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-app.js";
@@ -616,6 +713,40 @@ function updateText(){
   if(menuLinks[1]) menuLinks[1].innerText = t.menuScript;
 }
 
+/* ✅ ADDED: bọc updateText() để set text cho nút COPY (2->4) */
+const __updateText = updateText;
+updateText = function(){
+  __updateText();
+  const t = isVI ? text.vi : text.en;
+
+  const c2 = document.getElementById("copyBtn2");
+  const c3 = document.getElementById("copyBtn3");
+  const c4 = document.getElementById("copyBtn4");
+
+  if(c2) c2.innerText = t.copy;
+  if(c3) c3.innerText = t.copy;
+  if(c4) c4.innerText = t.copy;
+};
+/* ✅ ADDED END */
+
+/* ✅ ADDED: bọc thêm lần nữa để set text cho 4 Wink mới (5->8) */
+const ___updateText = updateText;
+updateText = function(){
+  ___updateText();
+  const t = isVI ? text.vi : text.en;
+
+  const c5 = document.getElementById("copyBtn5");
+  const c6 = document.getElementById("copyBtn6");
+  const c7 = document.getElementById("copyBtn7");
+  const c8 = document.getElementById("copyBtn8");
+
+  if(c5) c5.innerText = t.copy;
+  if(c6) c6.innerText = t.copy;
+  if(c7) c7.innerText = t.copy;
+  if(c8) c8.innerText = t.copy;
+};
+/* ✅ ADDED END */
+
 window.toggleForm = ()=>{ isLogin=!isLogin; updateText(); };
 window.switchLang = ()=>{
   isVI=!isVI;
@@ -640,9 +771,15 @@ window.submitForm = ()=>{
 
 function showHome(){
   switchPage(loginPage, homePage);
+
+  /* ✅ FIX: bật class để hiện social cố định */
+  document.body.classList.add("home-on");
 }
 function showLogin(){
   switchPage(homePage, loginPage);
+
+  /* ✅ FIX: tắt class để ẩn social ở login */
+  document.body.classList.remove("home-on");
 }
 
 window.logout = ()=>{
@@ -653,6 +790,40 @@ window.copyModule = ()=>{
   navigator.clipboard.writeText("https://raw.githubusercontent.com/NightmarketServer/Locket/refs/heads/main/Locketgold-V10.module");
   alert("Copied!");
 };
+
+/* ✅ ADDED: copy riêng cho 3 card cũ (2->4) */
+window.copyModule2 = ()=>{
+  navigator.clipboard.writeText("https://raw.githubusercontent.com/NightmarketServer/Shadowrocket-Module/refs/heads/main/Module/VIP%20Wink.module");
+  alert("Copied!");
+};
+window.copyModule3 = ()=>{
+  navigator.clipboard.writeText("https://raw.githubusercontent.com/NightmarketServer/Youtube-Premium/refs/heads/main/YouTubePremiumV3.5.module");
+  alert("Copied!");
+};
+window.copyModule4 = ()=>{
+  navigator.clipboard.writeText("https://raw.githubusercontent.com/NightmarketServer/Shadowrocket-Module/refs/heads/main/Module/Bilibili.module");
+  alert("Copied!");
+};
+/* ✅ ADDED END */
+
+/* ✅ ADDED: copy riêng cho 4 Wink mới (5->8) */
+window.copyModule5 = ()=>{
+  navigator.clipboard.writeText("https://raw.githubusercontent.com/NightmarketServer/Shadowrocket-Module/refs/heads/main/Module/VIP%20Wink%202.module");
+  alert("Copied!");
+};
+window.copyModule6 = ()=>{
+  navigator.clipboard.writeText("https://raw.githubusercontent.com/NightmarketServer/Shadowrocket-Module/refs/heads/main/Module/VIP%20Wink%203.module");
+  alert("Copied!");
+};
+window.copyModule7 = ()=>{
+  navigator.clipboard.writeText("https://raw.githubusercontent.com/NightmarketServer/Shadowrocket-Module/refs/heads/main/Module/VIP%20Wink%204.module");
+  alert("Copied!");
+};
+window.copyModule8 = ()=>{
+  navigator.clipboard.writeText("https://raw.githubusercontent.com/NightmarketServer/Shadowrocket-Module/refs/heads/main/Module/VIP%20Wink%205.module");
+  alert("Copied!");
+};
+/* ✅ ADDED END */
 
 onAuthStateChanged(auth, user=>{
   if(user) showHome();
@@ -702,7 +873,7 @@ function rand(a,b){ return a + Math.random()*(b-a); }
 
 function makeParticles(){
   const count = Math.floor((W*H)/45000);
-  particles = new Array(Math.max(50, Math.min(130, count))).fill(0).map(()=>({
+  particles = new Array(Math.max(50, Math.min(130, count))).fill(0).map(()=>( {
     x: rand(0,W),
     y: rand(0,H),
     r: rand(0.8, 2.2),
